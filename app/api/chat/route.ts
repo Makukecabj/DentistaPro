@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         });
 
         const completion = await client.chat.completions.create({
-          model: isGroq ? "llama3-8b-8192" : "gpt-4o-mini",
+          model: isGroq ? "llama-3.1-8b-instant" : "gpt-4o-mini",
           messages: [
             {
               role: "system",
