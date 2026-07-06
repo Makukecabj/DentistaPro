@@ -1,8 +1,8 @@
 // TODO: reemplazar por los profesionales reales del consultorio
 const TEAM = [
-  { name: "Dra. Ejemplo Apellido", role: "Odontóloga general", initials: "EA" },
-  { name: "Dr. Ejemplo Apellido", role: "Ortodoncista", initials: "EA" },
-  { name: "Dra. Ejemplo Apellido", role: "Especialista en implantes", initials: "EA" },
+  { name: "Dra. Ejemplo Apellido", role: "Odontóloga general", img: "https://placehold.co/400x400/2F6B5E/ffffff?text=Dra" },
+  { name: "Dr. Ejemplo Apellido", role: "Ortodoncista", img: "https://placehold.co/400x400/2F6B5E/ffffff?text=Dr" },
+  { name: "Dra. Ejemplo Apellido", role: "Especialista en implantes", img: "https://placehold.co/400x400/2F6B5E/ffffff?text=Dra" },
 ];
 
 export default function Team() {
@@ -17,9 +17,11 @@ export default function Team() {
             key={person.name}
             className="rounded-xl2 border border-ink/10 bg-white p-6 text-center"
           >
-            <div className="w-16 h-16 mx-auto rounded-full bg-teal-dark text-paper flex items-center justify-center font-display text-lg mb-4">
-              {person.initials}
-            </div>
+            <img
+              src={person.img}
+              alt={person.name}
+              className="w-16 h-16 mx-auto rounded-full object-cover mb-4"
+            />
             <h3 className="font-medium">{person.name}</h3>
             <p className="text-sm text-ink/60">{person.role}</p>
           </div>

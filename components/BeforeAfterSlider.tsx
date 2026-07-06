@@ -2,8 +2,7 @@
 
 import { useRef, useState } from "react";
 
-// TODO: reemplazar los dos bloques de color por las fotos reales del caso
-// (before y after), manteniendo la misma estructura de capas.
+// Usando imágenes placeholder. Reemplazar por fotos reales del caso.
 export default function BeforeAfterSlider() {
   const [position, setPosition] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -38,20 +37,18 @@ export default function BeforeAfterSlider() {
         onTouchEnd={() => (dragging.current = false)}
         onTouchMove={(e) => updateFromClientX(e.touches[0].clientX)}
       >
-        <div className="absolute inset-0 bg-ink flex items-center justify-center">
-          <span className="font-mono text-xs tracking-wide text-paper/70">
-            después
-          </span>
-        </div>
+        <img
+          src="https://placehold.co/800x450/17302B/E4ECE6?text=Despues"
+          alt="Después"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
 
-        <div
-          className="absolute inset-y-0 left-0 bg-sage flex items-center justify-center overflow-hidden"
+        <img
+          src="https://placehold.co/800x450/6B7570/F6F4EF?text=Antes"
+          alt="Antes"
+          className="absolute inset-y-0 left-0 object-cover"
           style={{ width: `${position}%` }}
-        >
-          <span className="font-mono text-xs tracking-wide text-ink/60">
-            antes
-          </span>
-        </div>
+        />
 
         <div
           className="absolute inset-y-0 flex items-center"
