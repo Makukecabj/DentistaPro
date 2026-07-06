@@ -45,7 +45,7 @@ async function guardarTurno(params: {
   return { ok: true };
 }
 
-// Sistema de respuestas por pasos (fallback cuando no hay API configurada)
+// Sistema de respuestas por pasos (fallback cuando no hay IA disponible)
 const PASOS: Record<number, { pregunta: string; campo: string }> = {
   0: { pregunta: "¡Hola! Soy el asistente de Estudio Dental Aguirre. ¿Querés reservar un turno?", campo: "inicio" },
   1: { pregunta: "¿Qué día te gustaría venir? (ej: 2026-07-10)", campo: "fecha" },
@@ -76,7 +76,6 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
     if (apiKey) {
       try {
-        // Groq es compatible con la API de OpenAI, solo cambia la base URL
         const isGroq = !!process.env.GROQ_API_KEY;
         const client = new OpenAI({
           apiKey: apiKey,
@@ -110,6 +109,9 @@ Si te piden servicios, ofrecé: limpieza dental, blanqueamiento, ortodoncia e im
       } catch (e) {
         const errorMsg = e instanceof Error ? e.message : "Error desconocido";
         console.error("Error con IA, usando fallback:", errorMsg);
+        return NextResponse.json({
+          reply: `La IA no respondió correctamente. Error: ${errorMsg}`,
+        });
       }
     }
 
