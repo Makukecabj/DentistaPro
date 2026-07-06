@@ -2,13 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getServiceSupabase } from "@/lib/supabaseClient";
 
-// Horarios disponibles (lunes a viernes 9 a 19hs)
-const HORARIOS = [
-  "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
-  "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
-  "18:00", "18:30",
-];
+// Horarios disponibles - configurables desde .env o usan valores por defecto
+const DIAS_ATENCION = (process.env.DIAS_ATENCION || "1,2,3,4,5").split(",").map(Number);
+const HORA_INICIO = parseInt(process.env.HORA_INICIO || "9");
+const HORA_FIN = parseInt(process.env.HORA_FIN || "19");
+const DURACION_TURNOS = parseInt(process.env.DURACION_TURNOS || "30");
+
+function generarHorarios(): string[] {
+  const horarios: string[] = [];
+  for (let h = HORA_INICIO; h < HORA_FIN; h++) {
+    for (let m = 0; m < 60; m += DURACION_TURNOS) {
+      const hora = h.toString().padStart(2, "0");
+      const min = m.toString().padStart(2, "0");
+      horarios.push(`${hora}:${min}`);
+    }
+  }
+  return horarios;
+}
+
+const HORARIOS = generarHorarios();
 
 async function consultarHorarios(fecha: string): Promise<string[]> {
   try {
