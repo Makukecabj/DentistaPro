@@ -210,8 +210,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ reply });
   } catch (error) {
     console.error("Error en chat:", error);
+    const errorMessage = error instanceof Error ? error.message : "Error desconocido";
     return NextResponse.json(
-      { reply: "Uy, hubo un error. Probá de nuevo en un momento." },
+      { reply: `Error: ${errorMessage}` },
       { status: 200 }
     );
   }
