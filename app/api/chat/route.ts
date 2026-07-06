@@ -21,7 +21,7 @@ async function consultarHorarios(fecha: string): Promise<string[]> {
     const ocupados = new Set((turnos ?? []).map((t) => t.hora.slice(0, 5)));
     return HORARIOS.filter((h) => !ocupados.has(h));
   } catch {
-    return HORARIOS; // Si falla Supabase, devolvemos todos como disponibles
+    return HORARIOS;
   }
 }
 
@@ -45,7 +45,7 @@ async function guardarTurno(params: {
   return { ok: true };
 }
 
-// Sistema de respuestas por pasos (fallback cuando OpenAI no está disponible)
+// Sistema de respuestas por pasos (fallback cuando no hay API configurada)
 const PASOS: Record<number, { pregunta: string; campo: string }> = {
   0: { pregunta: "¡Hola! Soy el asistente de Estudio Dental Aguirre. ¿Querés reservar un turno?", campo: "inicio" },
   1: { pregunta: "¿Qué día te gustaría venir? (ej: 2026-07-10)", campo: "fecha" },
@@ -62,13 +62,19 @@ export async function POST(req: NextRequest) {
 
     const userMessage = messages[messages.length - 1]?.content || "";
 
-    // --- MODO CON OPENAI ---
-    if (process.env.OPENAI_API_KEY) {
+    // --- MODO CON IA (Groq o OpenAI) ---
+    const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
+    if (apiKey) {
       try {
-        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        // Groq es compatible con la API de OpenAI, solo cambia la base URL
+        const isGroq = !!process.env.GROQ_API_KEY;
+        const client = new OpenAI({
+          apiKey: apiKey,
+          baseURL: isGroq ? "https://api.groq.com/openai/v1" : undefined,
+        });
 
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
+        const completion = await client.chat.completions.create({
+          model: isGroq ? "llama3-70b-8192" : "gpt-4o-mini",
           messages: [
             {
               role: "system",
@@ -93,13 +99,11 @@ Si te piden servicios, ofrecé: limpieza dental, blanqueamiento, ortodoncia e im
         }
       } catch (e) {
         const errorMsg = e instanceof Error ? e.message : "Error desconocido";
-        console.error("Error con OpenAI, usando fallback:", errorMsg);
-        // Si falla OpenAI, sigue con el modo fallback
+        console.error("Error con IA, usando fallback:", errorMsg);
       }
     }
 
-    // --- MODO FALLBACK (sin OpenAI) ---
-    // Determinamos en qué paso está la conversación según la cantidad de mensajes del usuario
+    // --- MODO FALLBACK (sin IA) ---
     const userMessages = messages.filter((m) => m.role === "user");
     const paso = Math.min(userMessages.length, 5);
 
@@ -108,7 +112,6 @@ Si te piden servicios, ofrecé: limpieza dental, blanqueamiento, ortodoncia e im
     }
 
     if (paso === 1) {
-      // El usuario ya dijo el día, consultamos horarios
       const fecha = userMessage.match(/\d{4}-\d{2}-\d{2}/)?.[0];
       if (fecha) {
         const disponibles = await consultarHorarios(fecha);
@@ -135,7 +138,6 @@ Si te piden servicios, ofrecé: limpieza dental, blanqueamiento, ortodoncia e im
     }
 
     if (paso >= 4) {
-      // Intentamos guardar el turno con datos mock si no tenemos todos los datos reales
       return NextResponse.json({
         reply: "¡Turno confirmado! Te va a llegar la confirmación. Si necesitás reprogramar, escribinos por acá.",
       });
