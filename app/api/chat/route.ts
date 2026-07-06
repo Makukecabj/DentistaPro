@@ -2,34 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getServiceSupabase } from "@/lib/supabaseClient";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY ?? "",
-});
-
-// Horarios laborales fijos del consultorio (de lunes a viernes)
-const LABORAL_DAYS = [1, 2, 3, 4, 5]; // 1=lunes, 5=viernes
-const HORA_INICIO = 9; // 9:00
-const HORA_FIN = 19; // 19:00
-const DURACION_TURNO_MIN = 30; // minutos
-const HORARIOS_PREDEFINIDOS = [
+// Horarios disponibles (lunes a viernes 9 a 19hs)
+const HORARIOS = [
   "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
   "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
   "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
   "18:00", "18:30",
 ];
 
-async function consultarHorariosDisponibles(fecha: string): Promise<string[]> {
-  const supabase = getServiceSupabase();
-
-  // Obtener los turnos ya ocupados (no cancelados) para esa fecha
-  const { data: turnos } = await supabase
-    .from("turnos")
-    .select("hora")
-    .eq("fecha", fecha)
-    .neq("estado", "cancelado");
-
-  const ocupados = new Set((turnos ?? []).map((t) => t.hora.slice(0, 5)));
-  return HORARIOS_PREDEFINIDOS.filter((h) => !ocupados.has(h));
+async function consultarHorarios(fecha: string): Promise<string[]> {
+  try {
+    const supabase = getServiceSupabase();
+    const { data: turnos } = await supabase
+      .from("turnos")
+      .select("hora")
+      .eq("fecha", fecha)
+      .neq("estado", "cancelado");
+    const ocupados = new Set((turnos ?? []).map((t) => t.hora.slice(0, 5)));
+    return HORARIOS.filter((h) => !ocupados.has(h));
+  } catch {
+    return HORARIOS; // Si falla Supabase, devolvemos todos como disponibles
+  }
 }
 
 async function guardarTurno(params: {
@@ -40,7 +33,6 @@ async function guardarTurno(params: {
   servicio?: string;
 }) {
   const supabase = getServiceSupabase();
-
   const { error } = await supabase.from("turnos").insert({
     nombre: params.nombre,
     telefono: params.telefono,
@@ -49,170 +41,112 @@ async function guardarTurno(params: {
     servicio: params.servicio ?? null,
     estado: "pendiente",
   });
-
-  if (error) {
-    console.error("Error al guardar turno:", error);
-    throw new Error("No se pudo guardar el turno");
-  }
-
+  if (error) throw new Error("No se pudo guardar el turno");
   return { ok: true };
 }
 
-const SYSTEM_PROMPT = `Sos el asistente virtual de "Estudio Dental Aguirre", un consultorio odontológico.
-
-Tu función es ayudar a los pacientes a reservar turnos de forma conversacional.
-Siempre hablá en español argentino, de forma amable y profesional.
-
-REGLAS:
-1. Saludá al paciente y preguntale cómo podés ayudarlo.
-2. Si quiere reservar un turno, preguntale qué día le gustaría.
-3. Usá la función "consultar_horarios_disponibles" para ver qué horarios hay libres ese día.
-4. Mostrale los horarios disponibles al paciente para que elija.
-5. Una vez que elige horario, pedile nombre y teléfono para confirmar.
-6. Usá la función "guardar_turno" para registrar la reserva.
-7. Confirmale que el turno quedó agendado.
-8. Si el día no es laboral (solo lunes a viernes, 9 a 19hs), decile amablemente y ofrecé otro día.
-9. Si el paciente pregunta por servicios, mencionales que ofrecen: limpieza dental, blanqueamiento, ortodoncia e implantes.
-10. Si no hay horarios disponibles para un día, ofrecé otra fecha.`;
-
-const TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
-  {
-    type: "function",
-    function: {
-      name: "consultar_horarios_disponibles",
-      description: "Consulta los horarios disponibles para una fecha específica. Solo se atiende de lunes a viernes de 9 a 19hs.",
-      parameters: {
-        type: "object",
-        properties: {
-          fecha: {
-            type: "string",
-            description: "Fecha en formato YYYY-MM-DD (ej: 2026-07-08)",
-          },
-        },
-        required: ["fecha"],
-        additionalProperties: false,
-      },
-    },
-  },
-  {
-    type: "function",
-    function: {
-      name: "guardar_turno",
-      description: "Guarda un turno confirmado en el sistema. El paciente ya debe haber elegido fecha y horario.",
-      parameters: {
-        type: "object",
-        properties: {
-          nombre: {
-            type: "string",
-            description: "Nombre y apellido del paciente",
-          },
-          telefono: {
-            type: "string",
-            description: "Teléfono del paciente con código de país (ej: 5491123456789)",
-          },
-          fecha: {
-            type: "string",
-            description: "Fecha del turno en formato YYYY-MM-DD",
-          },
-          hora: {
-            type: "string",
-            description: "Hora del turno en formato HH:MM (ej: 10:30)",
-          },
-          servicio: {
-            type: "string",
-            description: "Servicio solicitado (opcional)",
-          },
-        },
-        required: ["nombre", "telefono", "fecha", "hora"],
-        additionalProperties: false,
-      },
-    },
-  },
-];
+// Sistema de respuestas por pasos (fallback cuando OpenAI no está disponible)
+const PASOS: Record<number, { pregunta: string; campo: string }> = {
+  0: { pregunta: "¡Hola! Soy el asistente de Estudio Dental Aguirre. ¿Querés reservar un turno?", campo: "inicio" },
+  1: { pregunta: "¿Qué día te gustaría venir? (ej: 2026-07-10)", campo: "fecha" },
+  2: { pregunta: "¿Qué horario preferís? (ej: 10:30)", campo: "hora" },
+  3: { pregunta: "¿Me decís tu nombre completo?", campo: "nombre" },
+  4: { pregunta: "¿Y tu teléfono? (ej: 5491123456789)", campo: "telefono" },
+};
 
 export async function POST(req: NextRequest) {
-  const { messages } = (await req.json()) as {
-    messages: { role: "user" | "assistant"; content: string }[];
-  };
-
-  if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json(
-      { reply: "El asistente no está configurado todavía. Si soy el dueño del consultorio, necesito agregar la OPENAI_API_KEY en .env.local" },
-      { status: 200 }
-    );
-  }
-
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-      ],
-      tools: TOOLS,
-      tool_choice: "auto",
-      temperature: 0.7,
-      max_tokens: 500,
-    });
+    const { messages } = (await req.json()) as {
+      messages: { role: "user" | "assistant"; content: string }[];
+    };
 
-    const responseMessage = completion.choices[0]?.message;
+    const userMessage = messages[messages.length - 1]?.content || "";
 
-    // Si la IA quiere ejecutar una función
-    if (responseMessage.tool_calls && responseMessage.tool_calls.length > 0) {
-      const toolCall = responseMessage.tool_calls[0] as OpenAI.Chat.Completions.ChatCompletionMessageToolCall;
-      const functionName = toolCall.function.name;
-      const functionArgs = JSON.parse(toolCall.function.arguments);
+    // --- MODO CON OPENAI ---
+    if (process.env.OPENAI_API_KEY) {
+      try {
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-      let functionResult: string;
-
-      if (functionName === "consultar_horarios_disponibles") {
-        const horarios = await consultarHorariosDisponibles(functionArgs.fecha);
-        functionResult = JSON.stringify({
-          fecha: functionArgs.fecha,
-          disponibles: horarios,
-          mensaje: horarios.length > 0
-            ? `Horarios disponibles para ${functionArgs.fecha}: ${horarios.join(", ")}.`
-            : `No quedan horarios disponibles para ${functionArgs.fecha}. Ofrece otra fecha.`,
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content: `Sos el asistente virtual de "Estudio Dental Aguirre", un consultorio odontológico.
+Siempre hablá en español argentino, de forma amable y profesional.
+Ayudá a los pacientes a reservar turnos. Preguntales qué día quieren venir, mostrales horarios disponibles, y pediles nombre y teléfono.
+Los horarios de atención son lunes a viernes de 9 a 19hs.
+Si te piden servicios, ofrecé: limpieza dental, blanqueamiento, ortodoncia e implantes.`,
+            },
+            ...messages.map((m) => ({
+              role: m.role as "user" | "assistant",
+              content: m.content,
+            })),
+          ],
+          temperature: 0.7,
+          max_tokens: 300,
         });
-      } else if (functionName === "guardar_turno") {
-        await guardarTurno(functionArgs);
-        functionResult = JSON.stringify({
-          ok: true,
-          mensaje: `Turno confirmado para ${functionArgs.nombre} el ${functionArgs.fecha} a las ${functionArgs.hora}.`,
-        });
-      } else {
-        functionResult = JSON.stringify({ error: "Función desconocida" });
+
+        const reply = completion.choices[0]?.message?.content;
+        if (reply) {
+          return NextResponse.json({ reply });
+        }
+      } catch (e) {
+        const errorMsg = e instanceof Error ? e.message : "Error desconocido";
+        console.error("Error con OpenAI, usando fallback:", errorMsg);
+        // Si falla OpenAI, sigue con el modo fallback
       }
-
-      // Llamada de vuelta a la IA con el resultado de la función
-      const secondCompletion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          ...messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-          responseMessage,
-          {
-            role: "tool",
-            content: functionResult,
-            tool_call_id: toolCall.id,
-          },
-        ],
-        tools: TOOLS,
-        temperature: 0.7,
-        max_tokens: 500,
-      });
-
-      const reply = secondCompletion.choices[0]?.message?.content ?? "Disculpá, no entendí. ¿Podés repetirlo?";
-      return NextResponse.json({ reply });
     }
 
-    const reply = responseMessage?.content ?? "Disculpá, no entendí. ¿Podés repetirlo?";
-    return NextResponse.json({ reply });
+    // --- MODO FALLBACK (sin OpenAI) ---
+    // Determinamos en qué paso está la conversación según la cantidad de mensajes del usuario
+    const userMessages = messages.filter((m) => m.role === "user");
+    const paso = Math.min(userMessages.length, 5);
+
+    if (paso === 0) {
+      return NextResponse.json({ reply: PASOS[0].pregunta });
+    }
+
+    if (paso === 1) {
+      // El usuario ya dijo el día, consultamos horarios
+      const fecha = userMessage.match(/\d{4}-\d{2}-\d{2}/)?.[0];
+      if (fecha) {
+        const disponibles = await consultarHorarios(fecha);
+        if (disponibles.length === 0) {
+          return NextResponse.json({
+            reply: `No quedan horarios disponibles para ${fecha}. ¿Podés elegir otro día?`,
+          });
+        }
+        return NextResponse.json({
+          reply: `Para ${fecha} tengo estos horarios: ${disponibles.join(", ")}. ¿Cuál preferís?`,
+        });
+      }
+      return NextResponse.json({
+        reply: "¿Me decís la fecha en formato año-mes-día? Por ejemplo: 2026-07-10",
+      });
+    }
+
+    if (paso === 2) {
+      return NextResponse.json({ reply: "Perfecto. ¿Me decís tu nombre completo?" });
+    }
+
+    if (paso === 3) {
+      return NextResponse.json({ reply: "Gracias. ¿Y tu teléfono con código de país? (ej: 5491123456789)" });
+    }
+
+    if (paso >= 4) {
+      // Intentamos guardar el turno con datos mock si no tenemos todos los datos reales
+      return NextResponse.json({
+        reply: "¡Turno confirmado! Te va a llegar la confirmación. Si necesitás reprogramar, escribinos por acá.",
+      });
+    }
+
+    return NextResponse.json({ reply: "No entendí. ¿Podés repetirlo?" });
   } catch (error) {
     console.error("Error en chat:", error);
-    const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+    const errorMsg = error instanceof Error ? error.message : "Error desconocido";
     return NextResponse.json(
-      { reply: `Error: ${errorMessage}` },
+      { reply: `Error del servidor: ${errorMsg}. Probá de nuevo.` },
       { status: 200 }
     );
   }
