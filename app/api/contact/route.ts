@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+import { getSupabase } from "@/lib/supabaseClient";
 
 export async function POST(req: NextRequest) {
     const { nombre, telefono, mensaje } = (await req.json()) as {
@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
         );
     }
 
+    const supabase = getSupabase();
     const { error } = await supabase.from("mensajes_contacto").insert({
         nombre,
         telefono,
