@@ -1,14 +1,19 @@
-export default function Footer() {
+﻿export default function Footer() {
   return (
     <footer className="gradient-dark text-paper">
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6 py-16">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           <div className="sm:col-span-2 lg:col-span-1">
-            <a href="#" className="font-display text-xl font-medium tracking-tight text-paper">
+            <a href="#" className="flex items-center gap-2 font-display text-xl font-medium tracking-tight text-paper">
+              <svg className="w-6 h-6 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M12 2C6.48 2 2 6 2 10.5c0 2.5 1.5 5 3 6.5l-1 5 5-2c1.3.7 2.6 1 4 1 5.52 0 10-4 10-8.5S17.52 2 12 2z" />
+                <circle cx="8.5" cy="10.5" r="1" fill="currentColor" stroke="none" />
+                <circle cx="15.5" cy="10.5" r="1" fill="currentColor" stroke="none" />
+              </svg>
               Estudio Dental Aguirre
             </a>
             <p className="mt-3 text-sm text-paper/40 leading-relaxed max-w-xs">
-              Consultorio odontológico en Belgrano. Turnos online las 24 horas.
+              Consultorio odontológico premium en Belgrano. Turnos online las 24 horas.
             </p>
           </div>
 
@@ -25,34 +30,13 @@ export default function Footer() {
 
           <div>
             <h4 className="font-mono text-[11px] tracking-[0.2em] text-gold uppercase mb-4">
-              Links
+              Especialidades
             </h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#servicios" className="text-paper/50 link-underline hover:text-paper transition-colors">
-                  Servicios
-                </a>
-              </li>
-              <li>
-                <a href="#equipo" className="text-paper/50 link-underline hover:text-paper transition-colors">
-                  Equipo
-                </a>
-              </li>
-              <li>
-                <a href="#opiniones" className="text-paper/50 link-underline hover:text-paper transition-colors">
-                  Opiniones
-                </a>
-              </li>
-              <li>
-                <a href="#faq" className="text-paper/50 link-underline hover:text-paper transition-colors">
-                  Preguntas frecuentes
-                </a>
-              </li>
-              <li>
-                <a href="#turno" className="text-paper/50 link-underline hover:text-paper transition-colors">
-                  Reservar turno
-                </a>
-              </li>
+            <ul className="space-y-2 text-sm text-paper/50">
+              <li>Limpieza dental</li>
+              <li>Blanqueamiento</li>
+              <li>Ortodoncia invisible</li>
+              <li>Implantes dentales</li>
             </ul>
           </div>
 
@@ -89,7 +73,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://wa.me/5491145678900"
+                href="https://wa.me/5491147802233"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-paper/40 hover:text-gold transition-colors"

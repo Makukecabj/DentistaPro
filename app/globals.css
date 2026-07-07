@@ -33,7 +33,6 @@ body {
   }
 }
 
-/* Skip to content link */
 .skip-link {
   position: absolute;
   top: -100%;
@@ -53,7 +52,6 @@ body {
   top: 0;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -71,13 +69,11 @@ body {
   background: #a8a49c;
 }
 
-/* Firefox scrollbar */
 * {
   scrollbar-width: thin;
   scrollbar-color: #c4c0b8 #f6f4ef;
 }
 
-/* Glassmorphism utility */
 @layer utilities {
   .glass {
     background: rgba(255, 255, 255, 0.6);
@@ -128,6 +124,12 @@ body {
     background: linear-gradient(135deg, #f6f4ef 0%, #E4ECE6 50%, #f6f4ef 100%);
   }
 
+  .gradient-hero-animated {
+    background: linear-gradient(-45deg, #f6f4ef, #E4ECE6, #e8f0e9, #f6f4ef);
+    background-size: 400% 400%;
+    animation: gradient-shift 15s ease infinite;
+  }
+
   .gradient-section {
     background: linear-gradient(180deg, #f6f4ef 0%, rgba(228, 236, 230, 0.3) 50%, #f6f4ef 100%);
   }
@@ -167,12 +169,11 @@ body {
     transform: translate(-50%, -50%);
     width: 140%;
     height: 200%;
-    background: radial-gradient(ellipse, rgba(201, 151, 74, 0.15) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(201, 151, 74, 0.12) 0%, transparent 70%);
     pointer-events: none;
     z-index: -1;
   }
 
-  /* Premium microinteractions */
   .hover-lift {
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -212,7 +213,25 @@ body {
     animation: shimmer 1.5s infinite;
   }
 
-  /* WhatsApp green */
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(201, 151, 74, 0.25), 0 0 40px rgba(201, 151, 74, 0.1);
+  }
+
+  .glow-gold-strong {
+    box-shadow: 0 0 30px rgba(201, 151, 74, 0.4), 0 0 60px rgba(201, 151, 74, 0.2);
+  }
+
+  .glow-whatsapp {
+    box-shadow: 0 0 20px rgba(37, 211, 102, 0.35), 0 0 40px rgba(37, 211, 102, 0.15);
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #C9974A, #D4A85A, #C9974A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
   .whatsapp-green {
     background-color: #25D366;
   }
@@ -226,13 +245,18 @@ body {
   to   { transform: scale(1.08); }
 }
 
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 9998;
   pointer-events: none;
-  opacity: 0.035;
+  opacity: 0.03;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;

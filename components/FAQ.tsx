@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,7 +24,7 @@ const FAQS = [
   },
   {
     q: "¿Atienden emergencias?",
-    a: "Sí, ante una urgencia odontológica, contactanos por WhatsApp y te atendemos a la brevedad. Nuestro equipo está preparado para handlear emergencias dentales fuera del horario habitual.",
+    a: "Sí, ante una urgencia odontológica, contactanos por WhatsApp y te atendemos a la brevedad. Nuestro equipo está preparado para manejar emergencias dentales fuera del horario habitual.",
   },
   {
     q: "¿Cuánto cuesta una limpieza dental?",
@@ -32,15 +32,18 @@ const FAQS = [
   },
 ];
 
-function FAQItem({ q, a }: { q: string; a: string }) {
+function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
   const [open, setOpen] = useState(false);
+  const id = `faq-${index}`;
 
   return (
-    <div className="border-b border-ink/10 last:border-b-0">
+    <div className="border-b border-ink/8 last:border-b-0">
       <button
+        id={`${id}-button`}
+        aria-expanded={open}
+        aria-controls={`${id}-panel`}
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between gap-4 py-5 text-left group"
-        aria-expanded={open}
       >
         <span className="font-medium text-ink text-[15px] group-hover:text-gold transition-colors">
           {q}
@@ -58,6 +61,9 @@ function FAQItem({ q, a }: { q: string; a: string }) {
       <AnimatePresence>
         {open && (
           <motion.div
+            id={`${id}-panel`}
+            role="region"
+            aria-labelledby={`${id}-button`}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -77,7 +83,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 export default function FAQ() {
   return (
     <section id="faq" className="py-20 md:py-28 gradient-section scroll-mt-24">
-      <div className="max-w-3xl mx-auto px-6">
+      <div className="max-w-3xl mx-auto px-5 sm:px-6">
         <SectionReveal>
           <SectionHeading
             eyebrow="Preguntas frecuentes"
@@ -90,7 +96,7 @@ export default function FAQ() {
         <SectionReveal delay={0.1}>
           <div className="glass rounded-2xl shadow-premium p-6 md:p-8">
             {FAQS.map((faq, i) => (
-              <FAQItem key={i} q={faq.q} a={faq.a} />
+              <FAQItem key={i} q={faq.q} a={faq.a} index={i} />
             ))}
           </div>
         </SectionReveal>
@@ -98,7 +104,9 @@ export default function FAQ() {
         <SectionReveal delay={0.2}>
           <div className="mt-10 text-center">
             <a
-              href="https://wa.me/5491145678900"
+              href="https://wa.me/5491147802233?text=Hola!%20Tengo%20una%20consulta"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-ink/50 hover:text-gold transition-colors"
             >
               ¿Tenés otra pregunta? Escribinos por WhatsApp

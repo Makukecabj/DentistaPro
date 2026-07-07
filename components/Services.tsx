@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -67,11 +67,7 @@ const SERVICES = [
 
 const container = {
   hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
+  show: { transition: { staggerChildren: 0.12 } },
 };
 
 const item = {
@@ -82,7 +78,7 @@ const item = {
 export default function Services() {
   return (
     <section id="servicios" className="relative py-20 md:py-28 gradient-section scroll-mt-24">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6">
         <SectionReveal>
           <SectionHeading
             eyebrow="Tratamientos"
@@ -98,13 +94,11 @@ export default function Services() {
           viewport={{ once: true, margin: "-80px" }}
           className="grid sm:grid-cols-2 gap-6"
         >
-          {SERVICES.map((s, i) => (
+          {SERVICES.map((s) => (
             <motion.div
               key={s.name}
               variants={item}
-              className={`group rounded-2xl overflow-hidden glass shadow-premium transition-all duration-500 hover:shadow-premium-hover hover:-translate-y-1.5 ${
-                i === 0 ? "sm:row-span-2" : ""
-              }`}
+              className="group rounded-2xl overflow-hidden glass shadow-premium transition-all duration-500 hover:shadow-premium-hover hover:-translate-y-1.5"
             >
               <div className="relative overflow-hidden">
                 <Image
@@ -112,12 +106,10 @@ export default function Services() {
                   alt={s.alt}
                   width={500}
                   height={400}
-                  className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    i === 0 ? "h-52 sm:h-full min-h-[280px]" : "h-52"
-                  }`}
+                  className="w-full h-52 object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute top-4 right-4 bg-ink/60 backdrop-blur-sm text-paper text-[11px] font-mono tracking-wider px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
+                <div className="absolute top-4 right-4 bg-ink/60 backdrop-blur-sm text-paper text-[11px] font-mono tracking-wider px-3 py-1.5 rounded-full">
                   {s.duration}
                 </div>
               </div>
@@ -135,7 +127,7 @@ export default function Services() {
                     {s.duration}
                   </span>
                 </div>
-                <ul className="space-y-1.5 mb-4">
+                <ul className="space-y-1.5 mb-5">
                   {s.benefits.map((b) => (
                     <li key={b} className="flex items-center gap-2 text-[13px] text-ink/55">
                       <svg className="w-3.5 h-3.5 text-teal shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
@@ -146,7 +138,9 @@ export default function Services() {
                   ))}
                 </ul>
                 <a
-                  href="https://wa.me/5491145678900"
+                  href="https://wa.me/5491147802233?text=Hola!%20Quiero%20info%20sobre%20el%20tratamiento%20de%20{{s.name}}"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-[13px] font-medium text-gold hover:text-gold-dark transition-colors group/link"
                 >
                   Consultá este tratamiento
@@ -156,20 +150,6 @@ export default function Services() {
             </motion.div>
           ))}
         </motion.div>
-
-        <SectionReveal delay={0.3}>
-          <div className="mt-12 text-center">
-            <a
-              href="https://wa.me/5491145678900"
-              className="inline-flex items-center gap-2 text-sm text-ink/50 hover:text-gold transition-colors"
-            >
-              ¿No sabés cuál necesitá? Escribinos por WhatsApp
-              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M7 5l5 5-5 5" />
-              </svg>
-            </a>
-          </div>
-        </SectionReveal>
       </div>
     </section>
   );

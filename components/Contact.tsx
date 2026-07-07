@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -14,10 +14,16 @@ export default function Contact() {
   const [enviado, setEnviado] = useState(false);
   const [error, setError] = useState("");
   const [imgError, setImgError] = useState(false);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const nombreValid = nombre.trim().length >= 2;
+  const telefonoValid = telefono.trim().length >= 8;
+  const mensajeValid = mensaje.trim().length >= 5;
+  const formValid = nombreValid && telefonoValid && mensajeValid;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!nombre || !telefono || !mensaje) return;
+    if (!formValid) return;
 
     setEnviando(true);
     setError("");
@@ -38,6 +44,7 @@ export default function Contact() {
       setNombre("");
       setTelefono("");
       setMensaje("");
+      setTouched({});
     } catch {
       setError("No se pudo enviar el mensaje. Intentá de nuevo.");
     } finally {
@@ -45,9 +52,17 @@ export default function Contact() {
     }
   }
 
+  function getInputClass(field: string, valid: boolean) {
+    const base = "w-full rounded-2xl border bg-white/50 px-5 py-3.5 text-sm outline-none transition-all";
+    if (!touched[field]) return `${base} border-ink/10 focus:border-gold focus:ring-2 focus:ring-gold/20`;
+    return valid
+      ? `${base} border-teal/30 focus:border-teal focus:ring-2 focus:ring-teal/20`
+      : `${base} border-error/30 focus:border-error focus:ring-2 focus:ring-error/20`;
+  }
+
   return (
     <section id="contacto" className="py-20 md:py-28 scroll-mt-24">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6">
         <SectionReveal>
           <SectionHeading
             eyebrow="Consultorio"
@@ -129,42 +144,62 @@ export default function Contact() {
 
           <SectionReveal delay={0.2}>
             <div className="space-y-4">
-              <form onSubmit={handleSubmit} className="glass rounded-2xl shadow-premium p-6 space-y-4">
+              <form onSubmit={handleSubmit} className="glass rounded-2xl shadow-premium p-6 space-y-4" noValidate>
                 <div>
-                  <label htmlFor="nombre" className="sr-only">Nombre</label>
+                  <label htmlFor="nombre" className="block text-[13px] font-medium text-ink/60 mb-1.5">Nombre</label>
                   <input
                     id="nombre"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
-                    className="w-full rounded-2xl border border-ink/10 bg-white/50 px-5 py-3.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all"
-                    placeholder="Nombre"
+                    onBlur={() => setTouched((t) => ({ ...t, nombre: true }))}
+                    className={getInputClass("nombre", nombreValid)}
+                    placeholder="Tu nombre"
                     required
+                    autoComplete="name"
                   />
+                  {touched.nombre && !nombreValid && (
+                    <p className="text-[12px] text-error mt-1">Ingresá tu nombre (mínimo 2 caracteres)</p>
+                  )}
                 </div>
                 <div>
-                  <label htmlFor="telefono" className="sr-only">Teléfono</label>
+                  <label htmlFor="telefono" className="block text-[13px] font-medium text-ink/60 mb-1.5">Teléfono</label>
                   <input
                     id="telefono"
                     value={telefono}
                     onChange={(e) => setTelefono(e.target.value)}
-                    className="w-full rounded-2xl border border-ink/10 bg-white/50 px-5 py-3.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all"
-                    placeholder="Teléfono"
+                    onBlur={() => setTouched((t) => ({ ...t, telefono: true }))}
+                    className={getInputClass("telefono", telefonoValid)}
+                    placeholder="+54 11 1234-5678"
                     required
+                    autoComplete="tel"
                   />
+                  {touched.telefono && !telefonoValid && (
+                    <p className="text-[12px] text-error mt-1">Ingresá un número de teléfono válido</p>
+                  )}
                 </div>
                 <div>
-                  <label htmlFor="mensaje" className="sr-only">¿Qué necesitás?</label>
+                  <label htmlFor="mensaje" className="block text-[13px] font-medium text-ink/60 mb-1.5">¿Qué necesitás?</label>
                   <textarea
                     id="mensaje"
                     value={mensaje}
                     onChange={(e) => setMensaje(e.target.value)}
-                    className="w-full rounded-2xl border border-ink/10 bg-white/50 px-5 py-3.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all min-h-[120px] resize-none"
-                    placeholder="¿Qué necesitás?"
+                    onBlur={() => setTouched((t) => ({ ...t, mensaje: true }))}
+                    className={`${getInputClass("mensaje", mensajeValid)} min-h-[120px] resize-none`}
+                    placeholder="Contanos qué tratamiento te interesa..."
                     required
                   />
+                  {touched.mensaje && !mensajeValid && (
+                    <p className="text-[12px] text-error mt-1">Escribí tu consulta (mínimo 5 caracteres)</p>
+                  )}
                 </div>
                 {error && (
-                  <p className="text-sm text-red-500">{error}</p>
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-error/5 border border-error/10">
+                    <svg className="w-4 h-4 text-error shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="8" cy="8" r="6" />
+                      <path d="M8 5v3M8 10v.5" />
+                    </svg>
+                    <p className="text-sm text-error">{error}</p>
+                  </div>
                 )}
                 <AnimatePresence mode="wait">
                   {enviado ? (
@@ -192,17 +227,29 @@ export default function Contact() {
                     <motion.button
                       key="button"
                       type="submit"
-                      disabled={enviando}
-                      className="w-full rounded-full bg-ink text-paper px-6 py-3.5 text-sm font-medium hover:bg-teal-dark hover:shadow-glow-teal transition-all duration-300 disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99]"
+                      disabled={enviando || !formValid}
+                      className="w-full rounded-full bg-ink text-paper px-6 py-3.5 text-sm font-medium hover:bg-teal-dark hover:shadow-glow-teal transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
                     >
-                      {enviando ? "Enviando…" : "Enviar mensaje"}
+                      {enviando ? (
+                        <>
+                          <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+                            <path d="M4 12a8 8 0 018-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                          </svg>
+                          Enviando...
+                        </>
+                      ) : (
+                        "Enviar mensaje"
+                      )}
                     </motion.button>
                   )}
                 </AnimatePresence>
               </form>
 
               <a
-                href="https://wa.me/5491145678900"
+                href="https://wa.me/5491147802233?text=Hola!%20Quiero%20m%C3%A1s%20informaci%C3%B3n"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-2xl border border-ink/10 bg-white/30 py-3.5 text-sm text-ink/60 hover:text-gold hover:bg-gold/5 transition-all"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">

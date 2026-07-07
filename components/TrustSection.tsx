@@ -1,7 +1,6 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
-import SectionReveal from "./ui/SectionReveal";
 
 const TRUST_ITEMS = [
   {
@@ -66,18 +65,18 @@ const TRUST_ITEMS = [
 
 const container = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
+  show: { transition: { staggerChildren: 0.1 } },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 12 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const } },
 };
 
 export default function TrustSection() {
   return (
-    <section className="relative py-12 bg-ink border-y border-paper/5">
-      <div className="max-w-6xl mx-auto px-6">
+    <section className="relative py-10 bg-ink border-y border-paper/5">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6">
         <motion.div
           variants={container}
           initial="hidden"
@@ -89,7 +88,7 @@ export default function TrustSection() {
             <motion.div
               key={t.title}
               variants={item}
-              className="flex flex-col items-center text-center gap-2.5 group"
+              className="flex flex-col items-center text-center gap-2 group"
             >
               <div className="text-gold transition-transform duration-300 group-hover:scale-110">
                 {t.icon}

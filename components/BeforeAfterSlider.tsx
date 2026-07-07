@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
@@ -33,9 +33,17 @@ export default function BeforeAfterSlider() {
     isDragging.current = false;
   }, []);
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") {
+      setPosition((p) => Math.max(0, p - 2));
+    } else if (e.key === "ArrowRight") {
+      setPosition((p) => Math.min(100, p + 2));
+    }
+  }, []);
+
   return (
     <section id="antes-despues" className="py-20 md:py-28 gradient-section scroll-mt-24">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6">
         <SectionReveal>
           <SectionHeading
             eyebrow="Resultados"
@@ -48,14 +56,21 @@ export default function BeforeAfterSlider() {
           <div className="max-w-3xl mx-auto">
             <div
               ref={containerRef}
-              className="relative rounded-2xl overflow-hidden shadow-elevated border border-ink/5 aspect-[4/3] cursor-ew-resize select-none"
+              role="slider"
+              aria-label="Comparador antes y después"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(position)}
+              aria-valuetext={`Comparación: ${Math.round(position)}% después del tratamiento`}
+              tabIndex={0}
+              className="relative rounded-2xl overflow-hidden shadow-elevated border border-ink/5 aspect-[4/3] cursor-ew-resize select-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
               onPointerLeave={handlePointerUp}
+              onKeyDown={handleKeyDown}
               style={{ touchAction: "none" }}
             >
-              {/* After image (full) */}
               <div className="absolute inset-0">
                 <Image
                   src="/images/before-after/despues.jpg"
@@ -65,7 +80,6 @@ export default function BeforeAfterSlider() {
                 />
               </div>
 
-              {/* Before image (clipped) */}
               <div
                 className="absolute inset-0 overflow-hidden"
                 style={{ width: `${position}%` }}
@@ -79,12 +93,10 @@ export default function BeforeAfterSlider() {
                 />
               </div>
 
-              {/* Divider line */}
               <div
                 className="absolute top-0 bottom-0 w-0.5 bg-gold z-10"
                 style={{ left: `${position}%`, transform: "translateX(-50%)" }}
               >
-                {/* Handle */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gold shadow-glow flex items-center justify-center transition-transform duration-150 hover:scale-110">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#17302B" strokeWidth="2" strokeLinecap="round">
                     <path d="M5 9H1M13 9h4M5 9l3-3M5 9l3 3M13 9l-3-3M13 9l-3 3" />
@@ -92,7 +104,6 @@ export default function BeforeAfterSlider() {
                 </div>
               </div>
 
-              {/* Labels */}
               <div className="absolute top-4 left-4 bg-ink/70 backdrop-blur-sm text-paper text-[11px] font-mono tracking-wider uppercase px-3 py-1.5 rounded-full z-5">
                 Antes
               </div>
@@ -102,22 +113,8 @@ export default function BeforeAfterSlider() {
             </div>
 
             <div className="mt-4 text-center">
-              <p className="text-[13px] text-ink/40 font-mono">Arrastrá el slider para comparar</p>
+              <p className="text-[13px] text-ink/40 font-mono">Arrastrá el slider o usá las flechas del teclado para comparar</p>
             </div>
-          </div>
-        </SectionReveal>
-
-        <SectionReveal delay={0.25}>
-          <div className="mt-10 text-center">
-            <a
-              href="https://wa.me/5491145678900"
-              className="inline-flex items-center gap-2 text-sm text-ink/50 hover:text-gold transition-colors"
-            >
-              ¿Querés resultados como estos? Agendá tu consulta
-              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M7 5l5 5-5 5" />
-              </svg>
-            </a>
           </div>
         </SectionReveal>
       </div>

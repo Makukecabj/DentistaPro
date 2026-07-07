@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -27,11 +27,11 @@ const siteUrl = "https://dentista-pro-bice.vercel.app";
 
 export const metadata: Metadata = {
   title: {
-    default: "Estudio Dental Aguirre — Turnos online en Belgrano",
+    default: "Estudio Dental Aguirre — Odontólogo en Belgrano, CABA",
     template: "%s | Estudio Dental Aguirre",
   },
   description:
-    "Consultorio odontológico en Belgrano, CABA. Reservá tu turno online. Limpieza, blanqueamiento, ortodoncia e implantes. Especialistas certificados con tecnología de última generación.",
+    "Consultorio odontológico premium en Belgrano, CABA. Limpieza, blanqueamiento, ortodoncia e implantes. Especialistas certificados con tecnología de última generación. Turnos online 24hs.",
   keywords: [
     "dentista belgrano",
     "odontologo belgrano",
@@ -45,6 +45,8 @@ export const metadata: Metadata = {
     "dentista particular",
     "obra social dentista",
     "emergencia dental",
+    "odontologo belgrano caba",
+    "clínica dental belgrano",
   ],
   authors: [{ name: "Estudio Dental Aguirre" }],
   openGraph: {
@@ -52,9 +54,9 @@ export const metadata: Metadata = {
     locale: "es_AR",
     url: siteUrl,
     siteName: "Estudio Dental Aguirre",
-    title: "Estudio Dental Aguirre — Turnos online en Belgrano",
+    title: "Estudio Dental Aguirre — Odontólogo en Belgrano, CABA",
     description:
-      "Consultorio odontológico en Belgrano, CABA. Reservá tu turno online. Especialistas certificados con tecnología de última generación.",
+      "Consultorio odontológico premium en Belgrano, CABA. Especialistas certificados con tecnología de última generación. Turnos online 24hs.",
     images: [
       {
         url: `${siteUrl}/og-image.png`,
@@ -66,9 +68,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Estudio Dental Aguirre — Turnos online en Belgrano",
+    title: "Estudio Dental Aguirre — Odontólogo en Belgrano, CABA",
     description:
-      "Consultorio odontológico en Belgrano, CABA. Reservá tu turno online. Especialistas certificados.",
+      "Consultorio odontológico premium en Belgrano, CABA. Especialistas certificados. Turnos online 24hs.",
     images: [`${siteUrl}/og-image.png`],
   },
   robots: {
@@ -92,6 +94,7 @@ export default function RootLayout({
     image: `${siteUrl}/og-image.png`,
     url: siteUrl,
     telephone: "+541147802233",
+    email: "hola@estudiodentalaguirre.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Av. Cabildo 2450",
@@ -122,40 +125,43 @@ export default function RootLayout({
       "@type": "AggregateRating",
       ratingValue: "4.9",
       reviewCount: "127",
+      bestRating: "5",
     },
-    hasFAQPage: {
-      "@type": "FAQPage",
-      mainEntity: [
+    priceRange: "$$",
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Tratamientos Odontológicos",
+      itemListElement: [
         {
-          "@type": "Question",
-          name: "¿Duele un implante dental?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "El procedimiento se realiza con anestesia local, por lo que no se siente dolor durante la colocación. Después, el malestar es leve y se controla con medicación habitual.",
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Limpieza Dental",
+            description: "Limpieza dental profesional con ultrasonido y pulido.",
           },
         },
         {
-          "@type": "Question",
-          name: "¿Cuánto dura un blanqueamiento?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Los resultados del blanqueamiento pueden durar entre 1 y 2 años, dependiendo de tus hábitos. Te damos indicaciones personalizadas para mantener los resultados.",
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Blanqueamiento Dental",
+            description: "Blanqueamiento dental profesional hasta 8 tonos.",
           },
         },
         {
-          "@type": "Question",
-          name: "¿Aceptan obras sociales?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Sí, trabajamos con las principales obras sociales y prepagas. Consultanos por tu cobertura específica.",
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Ortodoncia",
+            description: "Ortodoncia con alineadores transparentes y brackets estéticos.",
           },
         },
         {
-          "@type": "Question",
-          name: "¿Cómo saco turno?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Podés reservar tu turno por chat, WhatsApp al +54 11 4780-2233, o llamándonos directamente. Elegí el día y horario que mejor te quede.",
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Implantes Dentales",
+            description: "Implantes dentales con materiales de primera calidad.",
           },
         },
       ],

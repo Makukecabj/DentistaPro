@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -12,6 +12,7 @@ const TEAM = [
     role: "Odontóloga general · Directora",
     specialty: "Estética dental y rehabilitación oral",
     university: "Universidad de Buenos Aires",
+    experience: "15+ años",
     imgSrc: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&h=300&fit=crop&q=80",
   },
   {
@@ -19,6 +20,7 @@ const TEAM = [
     role: "Ortodoncista",
     specialty: "Ortodoncia invisible y brackets estéticos",
     university: "Universidad de Buenos Aires",
+    experience: "12+ años",
     imgSrc: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&h=300&fit=crop&q=80",
   },
   {
@@ -26,6 +28,7 @@ const TEAM = [
     role: "Especialista en implantes",
     specialty: "Implantología y cirugía oral",
     university: "Universidad de Buenos Aires",
+    experience: "10+ años",
     imgSrc: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=300&h=300&fit=crop&q=80",
   },
 ];
@@ -49,7 +52,7 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const } },
 };
 
-function TeamCard({ name, role, specialty, university, imgSrc }: { name: string; role: string; specialty: string; university: string; imgSrc: string }) {
+function TeamCard({ name, role, specialty, university, experience, imgSrc }: { name: string; role: string; specialty: string; university: string; experience: string; imgSrc: string }) {
   const [imgError, setImgError] = useState(false);
 
   return (
@@ -66,7 +69,7 @@ function TeamCard({ name, role, specialty, university, imgSrc }: { name: string;
           </div>
         ) : (
           <>
-            <div className="absolute inset-0 rounded-full border-2 border-gold/30 scale-110 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500" />
+            <div className="absolute inset-0 rounded-full border-2 border-gold/0 scale-110 group-hover:border-gold/40 group-hover:scale-100 transition-all duration-500" />
             <Image
               src={imgSrc}
               alt={`Foto de ${name}`}
@@ -94,6 +97,13 @@ function TeamCard({ name, role, specialty, university, imgSrc }: { name: string;
           </svg>
           {university}
         </div>
+        <div className="flex items-center justify-center gap-1.5 text-[12px] text-teal/60 font-medium">
+          <svg className="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="8" cy="8" r="6.5" />
+            <path d="M8 4.5V8l2.5 1.5" />
+          </svg>
+          {experience}
+        </div>
       </div>
     </motion.div>
   );
@@ -102,7 +112,7 @@ function TeamCard({ name, role, specialty, university, imgSrc }: { name: string;
 export default function Team() {
   return (
     <section id="equipo" className="py-20 md:py-28 scroll-mt-24">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6">
         <SectionReveal>
           <SectionHeading
             eyebrow="Equipo"
@@ -122,20 +132,6 @@ export default function Team() {
             <TeamCard key={person.name} {...person} />
           ))}
         </motion.div>
-
-        <SectionReveal delay={0.3}>
-          <div className="mt-12 text-center">
-            <a
-              href="https://wa.me/5491145678900"
-              className="inline-flex items-center gap-2 text-sm text-ink/50 hover:text-gold transition-colors"
-            >
-              Conocé a nuestro equipo — Agendá tu consulta
-              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M7 5l5 5-5 5" />
-              </svg>
-            </a>
-          </div>
-        </SectionReveal>
       </div>
     </section>
   );

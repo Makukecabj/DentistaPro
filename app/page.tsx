@@ -1,18 +1,19 @@
-import Header from "@/components/Header";
+﻿import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import TrustSection from "@/components/TrustSection";
+import Statistics from "@/components/Statistics";
+import WhyChooseUs from "@/components/WhyChooseUs";
 import Services from "@/components/Services";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import Team from "@/components/Team";
-import Testimonials from "@/components/Testimonials";
-import Reviews from "@/components/Reviews";
+import SocialProof from "@/components/SocialProof";
+import BudgetCalculator from "@/components/BudgetCalculator";
 import FAQ from "@/components/FAQ";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import ChatWidget from "@/components/ChatWidget";
-import StickyMobileCTA from "@/components/StickyMobileCTA";
 import BackToTop from "@/components/ui/BackToTop";
+import SectionCTA from "@/components/SectionCTA";
 
 export default function Home() {
   return (
@@ -20,17 +21,20 @@ export default function Home() {
       <Header />
       <Hero />
       <TrustSection />
+      <Statistics />
+      <WhyChooseUs />
       <Services />
+      <SectionCTA text="Consultá tu tratamiento por WhatsApp" />
       <BeforeAfterSlider />
       <Team />
-      <Testimonials />
-      <Reviews />
+      <SectionCTA text="Agendá tu consulta" />
+      <SocialProof />
+      <BudgetCalculator />
       <FAQ />
+      <SectionCTA text="¿Tenés dudas? Escribinos" />
       <Contact />
       <Footer />
-      <ChatWidget />
       <FloatingWhatsApp />
-      <StickyMobileCTA />
       <BackToTop />
     </main>
   );
