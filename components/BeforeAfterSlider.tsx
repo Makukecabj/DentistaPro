@@ -47,13 +47,13 @@ export default function BeforeAfterSlider() {
             onTouchMove={(e) => updateFromClientX(e.touches[0].clientX)}
           >
             <img
-              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=800&h=450&fit=crop&q=80"
+              src="/images/before-after/despues.jpg"
               alt="Después del tratamiento - sonrisa brillante y natural"
               className="absolute inset-0 w-full h-full object-cover"
             />
 
             <img
-              src="https://images.unsplash.com/photo-1629909615184-74f495363b67?w=800&h=450&fit=crop&q=80"
+              src="/images/before-after/antes.jpg"
               alt="Antes del tratamiento"
               className="absolute inset-y-0 left-0 object-cover"
               style={{ width: `${position}%` }}
