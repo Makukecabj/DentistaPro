@@ -57,54 +57,63 @@ async function guardarTurno(params: {
   return { ok: true };
 }
 
-// ----- Helpers de parseo para el fallback -----
-function extraerDatos(mensajes: { role: string; content: string }[]) {
-  const userMsgs = mensajes.filter((m) => m.role === "user").map((m) => m.content);
-  const texto = userMsgs.join(" | ");
+// ----- Parseo de campos desde todo el historial del usuario -----
+function extraerDatos(userTexts: string[]) {
+  const texto = userTexts.join(" | ");
   const fecha = texto.match(/\d{4}-\d{2}-\d{2}/)?.[0] ?? null;
   const hora = texto.match(/\b([01]\d|2[0-3]):[0-5]\d\b/)?.[0] ?? null;
   const telefono = texto.match(/(?:\+?\d[\d\s()-]{7,}\d)/)?.[0]?.replace(/[\s()-]/g, "") ?? null;
-  const nombre = userMsgs.find((m) => m.toLowerCase().includes(" ") && m.length > 3 && !/\d{4}-\d{2}-\d{2}/.test(m) && !/\d{2}:\d{2}/.test(m) && !/(turno|hola|si|no|quiero|gracias|confirm)/i.test(m)) ?? null;
+  // Nombre: el mensaje de usuario más largo que no sea fecha/hora/teléfono y tenga al menos 2 palabras
+  let nombre: string | null = null;
+  for (const t of userTexts) {
+    const limpio = t.trim();
+    const esFecha = /\d{4}-\d{2}-\d{2}/.test(limpio);
+    const esHora = /\b([01]\d|2[0-3]):[0-5]\d\b/.test(limpio);
+    const esTelefono = /\d[\d\s()-]{7,}\d/.test(limpio) && limpio.replace(/\D/g, "").length >= 8;
+    const palabras = limpio.split(/\s+/).filter(Boolean);
+    if (!esFecha && !esHora && !esTelefono && palabras.length >= 2 && limpio.length >= 4) {
+      nombre = limpio;
+      break;
+    }
+  }
   return { fecha, hora, telefono, nombre };
 }
 
-// ----- Definición de tools para function calling -----
-const TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
-  {
-    type: "function",
-    function: {
-      name: "consultar_horarios_disponibles",
-      description:
-        "Consulta los horarios reales disponibles para una fecha dada (formato AAAA-MM-DD). Devuelve una lista de horarios libres.",
-      parameters: {
-        type: "object",
-        properties: {
-          fecha: { type: "string", description: "Fecha en formato AAAA-MM-DD" },
+// Cliente IA (opcional). Si no hay key, el flujo funciona igual con textos prefijados.
+function getAIClient(): OpenAI | null {
+  const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  return new OpenAI({
+    apiKey,
+    baseURL: process.env.GROQ_API_KEY ? "https://api.groq.com/openai/v1" : undefined,
+  });
+}
+
+async function redactar(prompt: string, fallback: string): Promise<string> {
+  const client = getAIClient();
+  if (!client) return fallback;
+  try {
+    const completion = await client.chat.completions.create({
+      model: process.env.GROQ_API_KEY ? "llama-3.1-8b-instant" : "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Sos el asistente virtual de Estudio Dental Aguirre, en Argentina. Responde en español argentino, corto, amable y natural. No des diagnósticos ni precios.",
         },
-        required: ["fecha"],
-      },
-    },
-  },
-  {
-    type: "function",
-    function: {
-      name: "guardar_turno",
-      description:
-        "Guarda un turno en la base de datos con los datos del paciente. Usar solo cuando se tengan DIA, HORA, NOMBRE y TELÉFONO confirmados.",
-      parameters: {
-        type: "object",
-        properties: {
-          nombre: { type: "string" },
-          telefono: { type: "string" },
-          fecha: { type: "string", description: "Fecha en formato AAAA-MM-DD" },
-          hora: { type: "string", description: "Hora en formato HH:MM" },
-          servicio: { type: "string" },
-        },
-        required: ["nombre", "telefono", "fecha", "hora"],
-      },
-    },
-  },
-];
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.7,
+      max_tokens: 200,
+    });
+    return completion.choices[0]?.message?.content?.trim() || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+// ----- Flujo determinístico server-side -----
+type Campos = { fecha: string | null; hora: string | null; nombre: string | null; telefono: string | null };
 
 export async function POST(req: NextRequest) {
   try {
@@ -112,176 +121,114 @@ export async function POST(req: NextRequest) {
       messages: { role: "user" | "assistant"; content: string }[];
     };
 
-    const userMessage = messages[messages.length - 1]?.content || "";
+    const userTexts = messages.filter((m) => m.role === "user").map((m) => m.content);
+    const ultimo = userTexts[userTexts.length - 1] ?? "";
 
-    // --- MODO CON IA (Groq o OpenAI) con function calling ---
-    const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
-    if (apiKey) {
-      try {
-        const isGroq = !!process.env.GROQ_API_KEY;
-        const client = new OpenAI({
-          apiKey: apiKey,
-          baseURL: isGroq ? "https://api.groq.com/openai/v1" : undefined,
-        });
+    // Detectar intención de turno (si el usuario pregunta por turno al menos una vez)
+    const quiereTurno = userTexts.some((t) =>
+      /(turno|reserv|agendar|sacar|pedir|cuando|horario|atender)/i.test(t)
+    );
 
-        const systemPrompt = `Sos el asistente virtual de "Estudio Dental Aguirre", un consultorio odontológico. Siempre hablá en español argentino, de forma amable, clara y profesional. Tu trabajo es ayudar a los pacientes a reservar turnos.
-
-Flujo obligatorio:
-1) Detectar intención de turno. Pedí primero el día que quiere venir.
-2) Si el día es ambiguo, confirmá la fecha exacta antes de seguir.
-3) Antes de mencionar horarios, llamá SIEMPRE a consultar_horarios_disponibles para la fecha elegida.
-4) Mostrale entre 3 y 5 horarios disponibles reales. Nunca inventes horarios.
-5) Cuando elija un horario, pedí su nombre completo.
-6) Después pedí el teléfono con código de país.
-7) Antes de confirmar, volvé a consultar la disponibilidad de ESE día y ESE horario.
-8) Pedí el teléfono con código de país DESPUÉS del nombre y ANTES de cualquier guardado.
-9) Solo llamá a guardar_turno cuando tengas confirmados DÍA, HORA, NOMBRE y TELÉFONO completos. Nunca lo llames con el teléfono vacío.
-10) Solo si guardar_turno confirma, avisá que el turno quedó reservado y que lo van a contactar por WhatsApp.
-
-Reglas:
-- No asumas ni inventes datos faltantes.
-- Si consultar_horarios_disponibles o guardar_turno fallan, no lo disimules. Avisá que hubo un problema técnico y ofrecé el contacto por WhatsApp.
-- No des diagnósticos ni precios en el chat; derivá al consultorio.`;
-
-        const completion = await client.chat.completions.create({
-          model: isGroq ? "llama-3.1-8b-instant" : "gpt-4o-mini",
-          messages: [
-            { role: "system", content: systemPrompt },
-            ...messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-          ],
-          tools: TOOLS,
-          tool_choice: "auto",
-          temperature: 0.7,
-          max_tokens: 400,
-        });
-
-        let choice = completion.choices[0];
-        let replyMsg = choice?.message;
-
-        // Manejar tool calls: ejecutar funciones y volver a pedir confirmación al modelo
-        if (replyMsg?.tool_calls && replyMsg.tool_calls.length > 0) {
-          const toolMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-            { role: "system", content: systemPrompt },
-            ...messages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
-            replyMsg,
-          ];
-
-          for (const call of replyMsg.tool_calls) {
-            const args = JSON.parse(call.function.arguments || "{}");
-            let result: unknown;
-            try {
-              if (call.function.name === "consultar_horarios_disponibles") {
-                const disp = await consultarHorarios(args.fecha);
-                result = { horarios_disponibles: disp };
-              } else if (call.function.name === "guardar_turno") {
-                if (!args.telefono || !args.nombre || !args.fecha || !args.hora) {
-                  result = { error: "Faltan datos del paciente (nombre, telefono, fecha u hora). Pedí el teléfono antes de guardar." };
-                } else {
-                  await guardarTurno(args);
-                  result = { ok: true, confirmado: true };
-                }
-              } else {
-                result = { error: "función desconocida" };
-              }
-            } catch (err) {
-              result = { error: err instanceof Error ? err.message : "Error al ejecutar" };
-            }
-            toolMessages.push({
-              role: "tool",
-              tool_call_id: call.id,
-              content: JSON.stringify(result),
-            });
-          }
-
-          const second = await client.chat.completions.create({
-            model: isGroq ? "llama-3.1-8b-instant" : "gpt-4o-mini",
-            messages: toolMessages,
-            temperature: 0.7,
-            max_tokens: 400,
-          });
-          replyMsg = second.choices[0]?.message;
-        }
-
-        const reply = replyMsg?.content;
-        if (reply) {
-          return NextResponse.json({ reply });
-        }
-      } catch (e) {
-        const errorMsg = e instanceof Error ? e.message : "Error desconocido";
-        console.error("Error con IA, usando fallback:", errorMsg);
-        // cae al fallback abajo
-      }
-    }
-
-    // --- MODO FALLBACK (sin IA o tras error de IA) ---
-    const userMessagesAll = messages.filter((m) => m.role === "user").map((m) => ({ role: "user", content: m.content }));
-    const paso = Math.min(userMessagesAll.length, 5);
-
-    if (paso === 0) {
+    if (userTexts.length === 0) {
       return NextResponse.json({
-        reply: "¡Hola! Soy el asistente de Estudio Dental Aguirre. ¿Querés reservar un turno?",
+        reply: await redactar(
+          "Saludá y ofrecé ayuda para reservar un turno.",
+          "¡Hola! Soy el asistente de Estudio Dental Aguirre. ¿Querés reservar un turno?"
+        ),
       });
     }
 
-    if (paso === 1) {
-      const fecha = userMessage.match(/\d{4}-\d{2}-\d{2}/)?.[0];
-      if (fecha) {
-        const disponibles = await consultarHorarios(fecha);
-        if (disponibles.length === 0) {
-          return NextResponse.json({
-            reply: `No quedan horarios disponibles para ${fecha}. ¿Podés elegir otro día?`,
-          });
-        }
+    if (!quiereTurno) {
+      return NextResponse.json({
+        reply: await redactar(
+          `El paciente escribió: "${ultimo}". Derivá a reservar turno o contacto por WhatsApp sin dar diagnóstico.`,
+          "Te puedo ayudar a reservar un turno. ¿Querés que miremos los horarios disponibles? También podés escribirnos por WhatsApp."
+        ),
+      });
+    }
+
+    const campos: Campos = extraerDatos(userTexts);
+
+    // 1) Falta fecha
+    if (!campos.fecha) {
+      return NextResponse.json({
+        reply: await redactar(
+          "Pedí la fecha del turno en formato AAAA-MM-DD.",
+          "¿Qué día te gustaría venir? Escribilo en formato año-mes-día, por ejemplo: 2026-07-10"
+        ),
+      });
+    }
+
+    // 2) Tenemos fecha pero falta hora -> consultar disponibilidad real
+    if (!campos.hora) {
+      const disponibles = await consultarHorarios(campos.fecha);
+      if (disponibles.length === 0) {
         return NextResponse.json({
-          reply: `Para ${fecha} tengo estos horarios: ${disponibles.join(", ")}. ¿Cuál preferís?`,
+          reply: await redactar(
+            `No hay horarios para ${campos.fecha}. Sugerí otro día.`,
+            `No quedan horarios disponibles para ${campos.fecha}. ¿Podés elegir otro día?`
+          ),
         });
       }
+      const muestra = disponibles.slice(0, 6).join(", ");
       return NextResponse.json({
-        reply: "¿Me decís la fecha en formato año-mes-día? Por ejemplo: 2026-07-10",
+        reply: await redactar(
+          `Mostrá estos horarios disponibles para ${campos.fecha}: ${muestra}. Preguntá cuál prefiere.`,
+          `Para ${campos.fecha} tengo estos horarios: ${muestra}. ¿Cuál preferís?`
+        ),
       });
     }
 
-    if (paso === 2) {
-      return NextResponse.json({ reply: "Perfecto. ¿Me decís tu nombre completo?" });
-    }
-
-    if (paso === 3) {
-      return NextResponse.json({ reply: "Gracias. ¿Y tu teléfono con código de país? (ej: 5491123456789)" });
-    }
-
-    if (paso >= 4) {
-      const datos = extraerDatos(userMessagesAll);
-      if (datos.fecha && datos.hora && datos.nombre && datos.telefono) {
-        try {
-          const disponibles = await consultarHorarios(datos.fecha);
-          if (!disponibles.includes(datos.hora)) {
-            return NextResponse.json({
-              reply: `Lo siento, el horario ${datos.hora} ya no está disponible para ${datos.fecha}. Los horarios libres son: ${disponibles.join(", ")}. ¿Cuál preferís?`,
-            });
-          }
-          await guardarTurno({
-            nombre: datos.nombre.trim(),
-            telefono: datos.telefono,
-            fecha: datos.fecha,
-            hora: datos.hora,
-          });
-          return NextResponse.json({
-            reply: `¡Turno confirmado! ${datos.nombre}, te anoté para el ${datos.fecha} a las ${datos.hora}. Te vamos a contactar por WhatsApp para confirmar. ¡Gracias!`,
-          });
-        } catch {
-          return NextResponse.json({
-            reply:
-              "Hubo un problema técnico para guardar tu turno. Escribinos por WhatsApp y lo resolvemos al toque.",
-          });
-        }
-      }
+    // 3) Falta nombre
+    if (!campos.nombre) {
       return NextResponse.json({
-        reply:
-          "Necesito todos tus datos (fecha, hora, nombre y teléfono) para confirmar. ¿Me los pasás? También podés escribirnos por WhatsApp.",
+        reply: await redactar("Pedí el nombre completo del paciente.", "Perfecto. ¿Me decís tu nombre completo?"),
       });
     }
 
-    return NextResponse.json({ reply: "No entendí. ¿Podés repetirlo?" });
+    // 4) Falta teléfono
+    if (!campos.telefono) {
+      return NextResponse.json({
+        reply: await redactar(
+          "Pedí el teléfono con código de país.",
+          "Gracias. ¿Y tu teléfono con código de país? (ej: 5491123456789)"
+        ),
+      });
+    }
+
+    // 5) Tenemos todo -> verificar disponibilidad y guardar
+    const disponibles = await consultarHorarios(campos.fecha);
+    if (!disponibles.includes(campos.hora)) {
+      const muestra = disponibles.slice(0, 6).join(", ");
+      return NextResponse.json({
+        reply: await redactar(
+          `El horario ${campos.hora} ya no está libre el ${campos.fecha}. Ofrecé estos: ${muestra}.`,
+          `Lo siento, el horario ${campos.hora} ya no está disponible para ${campos.fecha}. Los horarios libres son: ${muestra}. ¿Cuál preferís?`
+        ),
+      });
+    }
+
+    try {
+      await guardarTurno({
+        nombre: campos.nombre,
+        telefono: campos.telefono,
+        fecha: campos.fecha,
+        hora: campos.hora,
+      });
+      return NextResponse.json({
+        reply: await redactar(
+          `Confirmá el turno de ${campos.nombre} el ${campos.fecha} a las ${campos.hora}. Avisá que lo contactan por WhatsApp.`,
+          `¡Turno confirmado! ${campos.nombre}, te anoté para el ${campos.fecha} a las ${campos.hora}. Te vamos a contactar por WhatsApp para confirmar. ¡Gracias!`
+        ),
+      });
+    } catch {
+      return NextResponse.json({
+        reply: await redactar(
+          "Hubo error al guardar. Derivá a WhatsApp.",
+          "Hubo un problema técnico para guardar tu turno. Escribinos por WhatsApp y lo resolvemos al toque."
+        ),
+      });
+    }
   } catch (error) {
     console.error("Error en chat:", error);
     const errorMsg = error instanceof Error ? error.message : "Error desconocido";
