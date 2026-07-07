@@ -8,8 +8,8 @@ import SectionReveal from "./ui/SectionReveal";
 import { getBeforeAfterCases, BeforeAfterCase } from "@/lib/clinicService";
 
 const FALLBACK_CASES: BeforeAfterCase[] = [
-  { id: "f1", clinic_id: "", before_url: "https://images.unsplash.com/photo-1494790108377-be9c397d946e?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop&q=80", title: "Blanqueamiento dental", description: "Sonrisa más blanca y brillante", order: 1 },
-  { id: "f2", clinic_id: "", before_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1582750673913-50979bc0925c?w=600&h=400&fit=crop&q=80", title: "Ortodoncia invisible", description: "Alineadores transforman la sonrisa", order: 2 },
+  { id: "f1", clinic_id: "", before_url: "https://images.unsplash.com/photo-1527949830967-08e6506698a5?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1582750673913-50979bc0925c?w=600&h=400&fit=crop&q=80", title: "Blanqueamiento", description: "Sonrisa más blanca y brillante en 1 sesión", order: 1 },
+  { id: "f2", clinic_id: "", before_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1544005311-35c6e6f9a2e1?w=600&h=400&fit=crop&q=80", title: "Ortodoncia", description: "Alineadores transforman la sonrisa", order: 2 },
   { id: "f3", clinic_id: "", before_url: "https://images.unsplash.com/photo-1599566150125-1b7e7a0b5e2c?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1576091158677-7b8dfe9d6c1a?w=600&h=400&fit=crop&q=80", title: "Implantes", description: "Rehabilitación funcional y estética", order: 3 },
 ];
 
