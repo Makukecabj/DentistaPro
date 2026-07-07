@@ -48,7 +48,7 @@ const MOCK_POSTS: BlogPostPreview[] = [
 // Imágenes locales por post (carpeta /images/blog)
 const POST_IMAGES: Record<string, string> = {
   "visitas-regulares-dentista": "/images/blog/ultima.jpg",
-  "mitos-realidades-blanqueamiento-dental": "/images/blog/mito.jpg",
+  "mitos-realidades-blanqueamiento-dental": "/images/blog/mito.png",
 };
 
 const FALLBACK_BLOG_IMG =
