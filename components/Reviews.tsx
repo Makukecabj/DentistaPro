@@ -54,7 +54,7 @@ const item = {
 
 export default function Reviews() {
   return (
-    <section id="opiniones" className="py-28 gradient-section">
+    <section id="opiniones" className="py-28 bg-ink">
       <div className="max-w-6xl mx-auto px-6">
         <SectionReveal>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
@@ -62,8 +62,9 @@ export default function Reviews() {
               eyebrow="Google"
               title="Lo que dicen"
               subtitle=""
+              light
             />
-            <div className="hidden sm:flex items-center gap-2 text-sm text-ink/45 mb-1">
+            <div className="hidden sm:flex items-center gap-2 text-sm text-paper/50 mb-1">
               <div className="flex gap-0.5">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <svg key={i} width="14" height="14" viewBox="0 0 14 14" fill="#C9974A">
@@ -87,7 +88,7 @@ export default function Reviews() {
             <motion.div
               key={r.name}
               variants={item}
-              className="relative glass rounded-2xl shadow-premium p-6 border-l-2 border-gold/60 transition-all duration-300 hover:shadow-premium-hover hover:-translate-y-1"
+              className="relative bg-white/[0.06] border border-gold/20 rounded-2xl p-6 border-l-[3px] border-l-gold transition-all duration-300 hover:shadow-premium hover:-translate-y-1"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex gap-0.5">
@@ -95,10 +96,10 @@ export default function Reviews() {
                     <Star key={i} delay={i * 0.05} />
                   ))}
                 </div>
-                <span className="font-mono text-[11px] text-ink/30">{r.date}</span>
+                <span className="font-mono text-[11px] text-paper/30">{r.date}</span>
               </div>
-              <p className="text-sm text-ink/65 mb-5 leading-relaxed">&ldquo;{r.text}&rdquo;</p>
-              <p className="font-medium text-sm text-ink">{r.name}</p>
+              <p className="text-sm text-paper/70 mb-5 leading-relaxed">&ldquo;{r.text}&rdquo;</p>
+              <p className="font-medium text-sm text-paper">{r.name}</p>
             </motion.div>
           ))}
         </motion.div>

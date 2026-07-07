@@ -23,7 +23,7 @@ export default function SectionHeading({
         {eyebrow}
       </p>
       <h2
-        className={`font-display text-3xl md:text-4xl font-medium leading-tight ${
+        className={`heading-glow font-display text-3xl md:text-4xl font-medium leading-tight ${
           light ? "text-paper" : "text-ink"
         }`}
       >
