@@ -44,6 +44,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a href="#faq" className="text-paper/50 link-underline hover:text-paper transition-colors">
+                  Preguntas frecuentes
+                </a>
+              </li>
+              <li>
                 <a href="#turno" className="text-paper/50 link-underline hover:text-paper transition-colors">
                   Reservar turno
                 </a>
@@ -63,10 +68,17 @@ export default function Footer() {
                   +54 11 4780-2233
                 </a>
               </li>
+              <li>
+                <a href="mailto:hola@estudiodentalaguirre.com" className="link-underline hover:text-paper transition-colors">
+                  hola@estudiodentalaguirre.com
+                </a>
+              </li>
             </ul>
             <div className="flex gap-4 mt-4">
               <a
                 href="https://instagram.com/estudiodentalaguirre"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-paper/40 hover:text-gold transition-colors"
                 aria-label="Instagram"
               >
@@ -78,6 +90,8 @@ export default function Footer() {
               </a>
               <a
                 href="https://wa.me/5491145678900"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-paper/40 hover:text-gold transition-colors"
                 aria-label="WhatsApp"
               >
@@ -90,8 +104,11 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-paper/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-paper/30">
-          <p>&copy; {new Date().getFullYear()} Estudio Dental Aguirre</p>
-          <p className="font-mono text-[11px]">Hecho con dedicación en Belgrano</p>
+          <p>&copy; {new Date().getFullYear()} Estudio Dental Aguirre. Todos los derechos reservados.</p>
+          <div className="flex items-center gap-4">
+            <a href="#" className="hover:text-paper/60 transition-colors">Política de privacidad</a>
+            <a href="#" className="hover:text-paper/60 transition-colors">Términos</a>
+          </div>
         </div>
       </div>
     </footer>

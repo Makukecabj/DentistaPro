@@ -71,6 +71,12 @@ body {
   background: #a8a49c;
 }
 
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c4c0b8 #f6f4ef;
+}
+
 /* Glassmorphism utility */
 @layer utilities {
   .glass {
@@ -164,6 +170,54 @@ body {
     background: radial-gradient(ellipse, rgba(201, 151, 74, 0.15) 0%, transparent 70%);
     pointer-events: none;
     z-index: -1;
+  }
+
+  /* Premium microinteractions */
+  .hover-lift {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px -4px rgba(23, 48, 43, 0.1), 0 24px 64px -8px rgba(23, 48, 43, 0.07);
+  }
+
+  .link-premium {
+    position: relative;
+    text-decoration: none;
+  }
+  .link-premium::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, #C9974A, #D4A85A);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .link-premium:hover::after {
+    width: 100%;
+  }
+
+  .section-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #C9974A, transparent);
+    margin: 0 auto;
+  }
+
+  .shimmer-bg {
+    background: linear-gradient(90deg, #E4ECE6 25%, #f6f4ef 50%, #E4ECE6 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* WhatsApp green */
+  .whatsapp-green {
+    background-color: #25D366;
+  }
+  .whatsapp-green:hover {
+    background-color: #20BD5A;
   }
 }
 

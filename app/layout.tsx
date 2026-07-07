@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     template: "%s | Estudio Dental Aguirre",
   },
   description:
-    "Consultorio odontológico en Belgrano, CABA. Reservá tu turno online las 24 horas. Limpieza, blanqueamiento, ortodoncia e implantes.",
+    "Consultorio odontológico en Belgrano, CABA. Reservá tu turno online. Limpieza, blanqueamiento, ortodoncia e implantes. Especialistas certificados con tecnología de última generación.",
   keywords: [
     "dentista belgrano",
     "odontologo belgrano",
@@ -42,6 +42,9 @@ export const metadata: Metadata = {
     "implantes dentales",
     "consultorio odontologico",
     "dentista caba",
+    "dentista particular",
+    "obra social dentista",
+    "emergencia dental",
   ],
   authors: [{ name: "Estudio Dental Aguirre" }],
   openGraph: {
@@ -51,13 +54,13 @@ export const metadata: Metadata = {
     siteName: "Estudio Dental Aguirre",
     title: "Estudio Dental Aguirre — Turnos online en Belgrano",
     description:
-      "Consultorio odontológico en Belgrano, CABA. Reservá tu turno online las 24 horas.",
+      "Consultorio odontológico en Belgrano, CABA. Reservá tu turno online. Especialistas certificados con tecnología de última generación.",
     images: [
       {
         url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "Estudio Dental Aguirre",
+        alt: "Estudio Dental Aguirre — Consultorio odontológico en Belgrano",
       },
     ],
   },
@@ -65,7 +68,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Estudio Dental Aguirre — Turnos online en Belgrano",
     description:
-      "Consultorio odontológico en Belgrano, CABA. Reservá tu turno online las 24 horas.",
+      "Consultorio odontológico en Belgrano, CABA. Reservá tu turno online. Especialistas certificados.",
     images: [`${siteUrl}/og-image.png`],
   },
   robots: {
@@ -119,6 +122,43 @@ export default function RootLayout({
       "@type": "AggregateRating",
       ratingValue: "4.9",
       reviewCount: "127",
+    },
+    hasFAQPage: {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "¿Duele un implante dental?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "El procedimiento se realiza con anestesia local, por lo que no se siente dolor durante la colocación. Después, el malestar es leve y se controla con medicación habitual.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Cuánto dura un blanqueamiento?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Los resultados del blanqueamiento pueden durar entre 1 y 2 años, dependiendo de tus hábitos. Te damos indicaciones personalizadas para mantener los resultados.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Aceptan obras sociales?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Sí, trabajamos con las principales obras sociales y prepagas. Consultanos por tu cobertura específica.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Cómo saco turno?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Podés reservar tu turno por chat, WhatsApp al +54 11 4780-2233, o llamándonos directamente. Elegí el día y horario que mejor te quede.",
+          },
+        },
+      ],
     },
   };
 

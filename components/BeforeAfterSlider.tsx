@@ -1,50 +1,123 @@
 "use client";
 
+import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
+import SectionHeading from "./ui/SectionHeading";
 import SectionReveal from "./ui/SectionReveal";
 
 export default function BeforeAfterSlider() {
+  const [position, setPosition] = useState(50);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+
+  const updatePosition = useCallback((clientX: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    setPosition(percent);
+  }, []);
+
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    isDragging.current = true;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    updatePosition(e.clientX);
+  }, [updatePosition]);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isDragging.current) return;
+    updatePosition(e.clientX);
+  }, [updatePosition]);
+
+  const handlePointerUp = useCallback(() => {
+    isDragging.current = false;
+  }, []);
+
   return (
-    <section id="antes-despues" className="py-28 gradient-section">
+    <section id="antes-despues" className="py-20 md:py-28 gradient-section scroll-mt-24">
       <div className="max-w-6xl mx-auto px-6">
         <SectionReveal>
-          <div className="mb-10">
-            <p className="font-mono text-xs tracking-[0.2em] text-gold uppercase mb-3">
-              Resultados
-            </p>
-            <h2 className="heading-glow font-display text-3xl md:text-4xl font-medium mb-4">
-              Antes y después
-            </h2>
-            <p className="text-ink/50 text-[15px] max-w-lg leading-relaxed">
-              La diferencia real de un caso tratado en el consultorio.
-            </p>
-          </div>
+          <SectionHeading
+            eyebrow="Resultados"
+            title="Antes y después"
+            subtitle="La diferencia real de un caso tratado en el consultorio."
+          />
         </SectionReveal>
 
         <SectionReveal delay={0.15}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="relative rounded-2xl overflow-hidden shadow-elevated border border-ink/5 aspect-[4/3]">
-              <Image
-                src="/images/before-after/antes.jpg"
-                alt="Antes del tratamiento dental"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute top-4 left-4 bg-ink/70 text-paper text-[11px] font-mono tracking-wider uppercase px-3 py-1.5 rounded-full backdrop-blur-sm">
+          <div className="max-w-3xl mx-auto">
+            <div
+              ref={containerRef}
+              className="relative rounded-2xl overflow-hidden shadow-elevated border border-ink/5 aspect-[4/3] cursor-ew-resize select-none"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerLeave={handlePointerUp}
+              style={{ touchAction: "none" }}
+            >
+              {/* After image (full) */}
+              <div className="absolute inset-0">
+                <Image
+                  src="/images/before-after/despues.jpg"
+                  alt="Después del tratamiento dental - sonrisa brillante"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              {/* Before image (clipped) */}
+              <div
+                className="absolute inset-0 overflow-hidden"
+                style={{ width: `${position}%` }}
+              >
+                <Image
+                  src="/images/before-after/antes.jpg"
+                  alt="Antes del tratamiento dental"
+                  fill
+                  className="object-cover"
+                  style={{ width: "100%", minWidth: "100%" }}
+                />
+              </div>
+
+              {/* Divider line */}
+              <div
+                className="absolute top-0 bottom-0 w-0.5 bg-gold z-10"
+                style={{ left: `${position}%`, transform: "translateX(-50%)" }}
+              >
+                {/* Handle */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gold shadow-glow flex items-center justify-center transition-transform duration-150 hover:scale-110">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#17302B" strokeWidth="2" strokeLinecap="round">
+                    <path d="M5 9H1M13 9h4M5 9l3-3M5 9l3 3M13 9l-3-3M13 9l-3 3" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Labels */}
+              <div className="absolute top-4 left-4 bg-ink/70 backdrop-blur-sm text-paper text-[11px] font-mono tracking-wider uppercase px-3 py-1.5 rounded-full z-5">
                 Antes
               </div>
-            </div>
-            <div className="relative rounded-2xl overflow-hidden shadow-elevated border border-ink/5 aspect-[4/3]">
-              <Image
-                src="/images/before-after/despues.jpg"
-                alt="Después del tratamiento dental - sonrisa brillante"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute top-4 left-4 bg-paper/80 text-ink text-[11px] font-mono tracking-wider uppercase px-3 py-1.5 rounded-full backdrop-blur-sm">
+              <div className="absolute top-4 right-4 bg-paper/80 backdrop-blur-sm text-ink text-[11px] font-mono tracking-wider uppercase px-3 py-1.5 rounded-full z-5">
                 Después
               </div>
             </div>
+
+            <div className="mt-4 text-center">
+              <p className="text-[13px] text-ink/40 font-mono">Arrastrá el slider para comparar</p>
+            </div>
+          </div>
+        </SectionReveal>
+
+        <SectionReveal delay={0.25}>
+          <div className="mt-10 text-center">
+            <a
+              href="https://wa.me/5491145678900"
+              className="inline-flex items-center gap-2 text-sm text-ink/50 hover:text-gold transition-colors"
+            >
+              ¿Querés resultados como estos? Agendá tu consulta
+              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M7 5l5 5-5 5" />
+              </svg>
+            </a>
           </div>
         </SectionReveal>
       </div>
