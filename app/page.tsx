@@ -45,6 +45,15 @@ const MOCK_POSTS: BlogPostPreview[] = [
   },
 ];
 
+// Imágenes locales por post (carpeta /images/blog)
+const POST_IMAGES: Record<string, string> = {
+  "visitas-regulares-dentista": "/images/blog/ultima.jpg",
+  "mitos-realidades-blanqueamiento-dental": "/images/blog/mito.jpg",
+};
+
+const FALLBACK_BLOG_IMG =
+  "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1200&h=675&fit=crop&q=80";
+
 const container = {
   hidden: {},
   show: { transition: { staggerChildren: 0.1 } },
@@ -93,44 +102,47 @@ export default function Home() {
             viewport={{ once: true, margin: "-80px" }}
             className="grid sm:grid-cols-2 gap-8"
           >
-            {MOCK_POSTS.map((post) => (
-              <motion.div key={post.slug} variants={item} className="group glass rounded-2xl shadow-premium p-6 hover:shadow-premium-hover hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                <div className="relative h-40 w-full mb-5 rounded-xl overflow-hidden">
-                  <Image
-                    src={`/images/blog/${post.slug}.jpg`}
-                    alt={post.title}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).onerror = null;
-                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1200&h=675&fit=crop&q=80';
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent" />
-                </div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="text-gold">
-                    <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M6 14v-4a2 2 0 012-2h4a2 2 0 012 2v4M6 14h12v-4a2 2 0 00-2-2H8a2 2 0 00-2 2v4z" />
-                    </svg>
+            {MOCK_POSTS.map((post) => {
+              const postImg = POST_IMAGES[post.slug] || `/images/blog/${post.slug}.jpg`;
+              return (
+                <motion.div key={post.slug} variants={item} className="group glass rounded-2xl shadow-premium p-6 hover:shadow-premium-hover hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <div className="relative h-40 w-full mb-5 rounded-xl overflow-hidden">
+                    <Image
+                      src={postImg}
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).onerror = null;
+                        (e.target as HTMLImageElement).src = FALLBACK_BLOG_IMG;
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent" />
                   </div>
-                  <h3 className="font-display text-xl font-medium text-ink group-hover:text-gold transition-colors">
-                    {post.title}
-                  </h3>
-                </div>
-                <p className="text-sm text-ink/60 leading-relaxed mb-4 line-clamp-3">
-                  {post.excerpt}
-                </p>
-                <div className="flex justify-between items-center text-xs text-ink/40 font-mono">
-                  <span>{post.date}</span>
-                  <Link href={`/blog/${post.slug}`}
-                    className="group/link inline-flex items-center gap-1 font-medium text-gold hover:text-gold-dark transition-colors">
-                    Leer más
-                    <span className="transition-transform duration-200 group-hover/link:translate-x-0.5">&rarr;</span>
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="text-gold">
+                      <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M6 14v-4a2 2 0 012-2h4a2 2 0 012 2v4M6 14h12v-4a2 2 0 00-2-2H8a2 2 0 00-2 2v4z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-display text-xl font-medium text-ink group-hover:text-gold transition-colors">
+                      {post.title}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-ink/60 leading-relaxed mb-4 line-clamp-3">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex justify-between items-center text-xs text-ink/40 font-mono">
+                    <span>{post.date}</span>
+                    <Link href={`/blog/${post.slug}`}
+                      className="group/link inline-flex items-center gap-1 font-medium text-gold hover:text-gold-dark transition-colors">
+                      Leer más
+                      <span className="transition-transform duration-200 group-hover/link:translate-x-0.5">&rarr;</span>
+                    </Link>
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
           <SectionReveal delay={0.3}>
             <div className="mt-12 text-center">

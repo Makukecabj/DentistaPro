@@ -101,7 +101,7 @@ export default function ChatWidget() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap bg-ink text-paper text-xs font-medium px-3 py-2 rounded-xl shadow-elevated"
+                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap max-w-[90vw] text-center bg-ink text-paper text-xs font-medium px-3 py-2 rounded-xl shadow-elevated"
                 >
                   ¿Necesitás un turno?
                   <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-ink" />
@@ -151,8 +151,8 @@ export default function ChatWidget() {
                 >
                   <div
                     className={`rounded-2xl px-4 py-2.5 text-sm max-w-[85%] ${m.role === "user"
-                        ? "bg-ink text-paper rounded-br-md"
-                        : "bg-sage/60 text-ink rounded-bl-md"
+                      ? "bg-ink text-paper rounded-br-md"
+                      : "bg-sage/60 text-ink rounded-bl-md"
                       }`}
                   >
                     {m.text}

@@ -180,7 +180,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${fraunces.variable} ${inter.variable} ${plexMono.variable} font-sans antialiased bg-paper text-ink`}
+        className={`${fraunces.variable} ${inter.variable} ${plexMono.variable} font-sans antialiased bg-paper text-ink overflow-x-hidden`}
       >
         <a href="#main-content" className="skip-link">
           Saltar al contenido principal
