@@ -100,10 +100,10 @@ export default function Contact() {
                   </div>
                 ) : (
                   <Image
-                    src="https://images.unsplash.com/photo-1629909615184-74f495363b67?w=600&h=200&fit=crop&q=80"
-                    alt="Fachada del consultorio Estudio Dental Aguirre en Av. Cabildo, Belgrano"
-                    width={600}
-                    height={200}
+                    src="/images/contact/consultorio-ext.jpg"
+                    alt="Fachada del Estudio Dental Aguirre en Av. Cabildo, Belgrano"
+                    width={800}
+                    height={500}
                     className="rounded-2xl w-full h-64 object-cover shadow-premium"
                     onError={() => setImgError(true)}
                   />
