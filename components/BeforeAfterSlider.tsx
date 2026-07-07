@@ -216,9 +216,11 @@ export default function BeforeAfterSlider() {
               </div>
             )}
 
-            <div className="mt-4 text-center">
-              <p className="text-[13px] text-ink/40 font-mono">Arrastrá el slider o usá las flechas del teclado para comparar</p>
-            </div>
+            {!isSingleImage && (
+              <div className="mt-4 text-center">
+                <p className="text-[13px] text-ink/40 font-mono">Arrastrá el slider o usá las flechas del teclado para comparar</p>
+              </div>
+            )}
           </div>
         </SectionReveal>
       </div>
