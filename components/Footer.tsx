@@ -10,7 +10,7 @@
                 <circle cx="8.5" cy="10.5" r="1" fill="currentColor" stroke="none" />
                 <circle cx="15.5" cy="10.5" r="1" fill="currentColor" stroke="none" />
               </svg>
-              Estudio Dental Aguirre
+              Dr. Martín Aguirre - Odontología
             </a>
             <p className="mt-3 text-sm text-paper/40 leading-relaxed max-w-xs">
               Consultorio odontologico premium en Belgrano. Turnos online las 24 horas.
@@ -51,8 +51,8 @@
                 </a>
               </li>
               <li>
-                <a href="#equipo" className="link-underline hover:text-paper transition-colors">
-                  Equipo
+                <a href="#sobre-mi" className="link-underline hover:text-paper transition-colors">
+                  Sobre mí
                 </a>
               </li>
               <li>

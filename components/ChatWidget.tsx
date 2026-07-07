@@ -69,67 +69,48 @@ export default function ChatWidget() {
 
   return (
     <>
-      <motion.button
-        onClick={() => setOpen(!open)}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gold text-ink shadow-elevated flex items-center justify-center hover:shadow-glow-lg transition-shadow duration-300"
-        aria-label={open ? "Cerrar chat" : "Abrir chat de turnos"}
-      >
-        <AnimatePresence mode="wait">
-          {open ? (
+      {!open && (
+        <motion.button
+          onClick={() => setOpen(true)}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.95 }}
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gold text-ink shadow-elevated flex items-center justify-center hover:shadow-glow-lg transition-shadow duration-300"
+          aria-label="Abrir chat de turnos"
+        >
+          <motion.div key="chat-icon" className="relative">
             <motion.svg
-              key="close"
-              initial={{ rotate: -90, opacity: 0 }}
+              initial={{ rotate: 90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
+              exit={{ rotate: -90, opacity: 0 }}
               transition={{ duration: 0.2 }}
               width="22"
               height="22"
-              viewBox="0 0 22 22"
+              viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="1.5"
               strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <path d="M6 6l10 10M16 6L6 16" />
+              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
             </motion.svg>
-          ) : (
-            <motion.div key="chat-icon" className="relative">
-              <motion.svg
-                initial={{ rotate: 90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: -90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
-              </motion.svg>
-              <AnimatePresence>
-                {showTooltip && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap bg-ink text-paper text-xs font-medium px-3 py-2 rounded-xl shadow-elevated"
-                  >
-                    ¿Necesitás un turno?
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-ink" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.button>
+            <AnimatePresence>
+              {showTooltip && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap bg-ink text-paper text-xs font-medium px-3 py-2 rounded-xl shadow-elevated"
+                >
+                  ¿Necesitás un turno?
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-ink" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </motion.button>
+      )}
 
       <AnimatePresence>
         {open && (
@@ -138,7 +119,7 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-            className="fixed bottom-24 right-6 z-40 w-[340px] max-w-[calc(100vw-3rem)] rounded-2xl border border-ink/8 bg-white shadow-elevated overflow-hidden flex flex-col"
+            className="fixed bottom-[calc(env(safe-area-inset-bottom)+6rem)] right-4 left-4 md:left-auto md:right-6 z-40 w-auto md:w-[340px] max-w-[calc(100vw-2rem)] md:max-w-[calc(100vw-3rem)] rounded-2xl border border-ink/8 bg-white shadow-elevated overflow-hidden flex flex-col"
           >
             <div className="gradient-dark text-paper px-5 py-3.5 flex items-center gap-2.5">
               <span className="relative flex h-2.5 w-2.5">
@@ -148,6 +129,15 @@ export default function ChatWidget() {
               <span className="font-mono text-xs tracking-wide text-paper/80">
                 asistente de turnos &middot; en linea
               </span>
+              <button
+                onClick={() => setOpen(false)}
+                className="ml-auto text-paper/60 hover:text-paper transition-colors"
+                aria-label="Cerrar chat"
+              >
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M6 6l10 10M16 6L6 16" />
+                </svg>
+              </button>
             </div>
 
             <div
@@ -161,8 +151,8 @@ export default function ChatWidget() {
                 >
                   <div
                     className={`rounded-2xl px-4 py-2.5 text-sm max-w-[85%] ${m.role === "user"
-                      ? "bg-ink text-paper rounded-br-md"
-                      : "bg-sage/60 text-ink rounded-bl-md"
+                        ? "bg-ink text-paper rounded-br-md"
+                        : "bg-sage/60 text-ink rounded-bl-md"
                       }`}
                   >
                     {m.text}
@@ -187,7 +177,7 @@ export default function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Escribi tu mensaje..."
-                className="flex-1 rounded-full border border-ink/10 bg-sage/30 px-4 py-2.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/15 transition-all"
+                className="flex-1 rounded-full border border-ink/10 bg-sage/30 px-4 py-3 text-base outline-none focus:border-gold focus:ring-2 focus:ring-gold/15 transition-all"
               />
               <button
                 type="submit"

@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_ITEMS = [
   { href: "#servicios", label: "Servicios" },
-  { href: "#equipo", label: "Equipo" },
+  { href: "#sobre-mi", label: "Sobre mí" },
   { href: "#opiniones", label: "Opiniones" },
   { href: "#contacto", label: "Contacto" },
   { href: "/blog", label: "Blog" },
 ];
 
-const SECTION_IDS = ["servicios", "antes-despues", "equipo", "opiniones", "faq", "contacto"];
+const SECTION_IDS = ["servicios", "antes-despues", "sobre-mi", "opiniones", "faq", "contacto"];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -64,9 +64,8 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass-strong shadow-soft py-3" : "bg-transparent py-4"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass-strong shadow-soft py-3" : "bg-transparent py-4"
+        }`}
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-6 flex items-center justify-between">
         <a
@@ -78,8 +77,8 @@ export default function Header() {
             <circle cx="8.5" cy="10.5" r="1" fill="currentColor" stroke="none" />
             <circle cx="15.5" cy="10.5" r="1" fill="currentColor" stroke="none" />
           </svg>
-          <span className="hidden sm:inline">Estudio Dental Aguirre</span>
-          <span className="sm:hidden">EDA</span>
+          <span className="hidden sm:inline">Dr. Martín Aguirre</span>
+          <span className="sm:hidden">MA</span>
         </a>
 
         <nav className="hidden md:flex items-center gap-7 text-[13px] text-ink/60">
@@ -90,9 +89,8 @@ export default function Header() {
               <a
                 key={item.href}
                 href={item.href}
-                className={`link-premium transition-colors duration-200 ${
-                  isActive ? "text-gold font-medium" : "hover:text-ink"
-                }`}
+                className={`link-premium transition-colors duration-200 ${isActive ? "text-gold font-medium" : "hover:text-ink"
+                  }`}
               >
                 {item.label}
               </a>
@@ -128,19 +126,16 @@ export default function Header() {
           >
             <div className="w-5 flex flex-col gap-1.5">
               <span
-                className={`block h-[1.5px] bg-ink rounded-full transition-all duration-300 origin-center ${
-                  mobileOpen ? "rotate-45 translate-y-[4.5px]" : ""
-                }`}
+                className={`block h-[1.5px] bg-ink rounded-full transition-all duration-300 origin-center ${mobileOpen ? "rotate-45 translate-y-[4.5px]" : ""
+                  }`}
               />
               <span
-                className={`block h-[1.5px] bg-ink rounded-full transition-all duration-300 ${
-                  mobileOpen ? "opacity-0 scale-0" : ""
-                }`}
+                className={`block h-[1.5px] bg-ink rounded-full transition-all duration-300 ${mobileOpen ? "opacity-0 scale-0" : ""
+                  }`}
               />
               <span
-                className={`block h-[1.5px] bg-ink rounded-full transition-all duration-300 origin-center ${
-                  mobileOpen ? "-rotate-45 -translate-y-[4.5px]" : ""
-                }`}
+                className={`block h-[1.5px] bg-ink rounded-full transition-all duration-300 origin-center ${mobileOpen ? "-rotate-45 -translate-y-[4.5px]" : ""
+                  }`}
               />
             </div>
           </button>
@@ -168,9 +163,8 @@ export default function Header() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.05 }}
-                    className={`text-base font-medium transition-colors py-2.5 px-3 rounded-lg ${
-                      isActive ? "text-gold bg-gold/5" : "text-ink/70 hover:text-ink hover:bg-ink/5"
-                    }`}
+                    className={`text-base font-medium transition-colors py-2.5 px-3 rounded-lg ${isActive ? "text-gold bg-gold/5" : "text-ink/70 hover:text-ink hover:bg-ink/5"
+                      }`}
                   >
                     {item.label}
                   </motion.a>
