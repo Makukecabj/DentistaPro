@@ -138,8 +138,8 @@ INSERT INTO clinic_before_after (id, clinic_id, before_url, after_url, title, de
      'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&h=400&fit=crop&q=80',
      'Implantes', 'Rehabilitación funcional y estética'),
     ('66666666-6666-6666-6666-666666666669', '11111111-1111-1111-1111-111111111111',
-     'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=600&h=400&fit=crop&q=80',
-     'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop&q=80',
+     '/images/blog/limpieza.webp',
+     '/images/blog/limpieza.webp',
      'Limpieza', 'Dientes libres de placa y tartaro')
 ON CONFLICT (id) DO NOTHING;
 
