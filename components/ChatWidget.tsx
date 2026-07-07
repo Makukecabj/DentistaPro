@@ -56,10 +56,13 @@ export default function ChatWidget() {
   }
 
   return (
-    <div className="w-full max-w-sm rounded-xl2 border border-ink/10 bg-white shadow-lg overflow-hidden flex flex-col">
-      <div className="bg-teal-dark text-paper px-4 py-3 flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-gold" />
-        <span className="font-mono text-xs tracking-wide">
+    <div className="w-full max-w-sm rounded-2xl border border-ink/8 bg-white shadow-elevated overflow-hidden flex flex-col">
+      <div className="gradient-dark text-paper px-5 py-3.5 flex items-center gap-2.5">
+        <span className="relative flex h-2.5 w-2.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75" />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gold" />
+        </span>
+        <span className="font-mono text-xs tracking-wide text-paper/80">
           asistente de turnos · en línea
         </span>
       </div>
@@ -74,10 +77,11 @@ export default function ChatWidget() {
             className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`rounded-xl2 px-3 py-2 text-sm max-w-[85%] ${m.role === "user"
-                  ? "bg-sage text-ink"
-                  : "bg-paper border border-ink/10 text-ink"
-                }`}
+              className={`rounded-2xl px-4 py-2.5 text-sm max-w-[85%] ${
+                m.role === "user"
+                  ? "bg-ink text-paper rounded-br-md"
+                  : "bg-sage/60 text-ink rounded-bl-md"
+              }`}
             >
               {m.text}
             </div>
@@ -85,23 +89,27 @@ export default function ChatWidget() {
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="rounded-xl2 px-3 py-2 text-sm bg-paper border border-ink/10 text-ash">
-              escribiendo…
+            <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-sage/60 text-ink">
+              <div className="flex gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-ink/30 animate-pulse-soft" style={{ animationDelay: "0ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-ink/30 animate-pulse-soft" style={{ animationDelay: "200ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-ink/30 animate-pulse-soft" style={{ animationDelay: "400ms" }} />
+              </div>
             </div>
           </div>
         )}
       </div>
 
-      <form onSubmit={handleSend} className="border-t border-ink/10 p-3 flex gap-2">
+      <form onSubmit={handleSend} className="border-t border-ink/5 p-3 flex gap-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Escribí tu mensaje…"
-          className="flex-1 rounded-full border border-ink/15 px-4 py-2 text-sm outline-none focus:border-gold"
+          className="flex-1 rounded-full border border-ink/10 bg-sage/30 px-4 py-2.5 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/15 transition-all"
         />
         <button
           type="submit"
-          className="rounded-full bg-gold text-ink text-sm font-medium px-4 py-2 hover:bg-gold-dark hover:text-paper transition-colors disabled:opacity-50"
+          className="rounded-full bg-gold text-ink text-sm font-medium px-5 py-2.5 hover:bg-gold-dark hover:text-paper transition-all duration-300 disabled:opacity-50 hover:scale-[1.03] active:scale-[0.97]"
           disabled={loading}
         >
           Enviar
