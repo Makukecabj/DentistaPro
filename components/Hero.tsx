@@ -1,12 +1,21 @@
+import Image from "next/image";
 import ChatWidget from "./ChatWidget";
 
 export default function Hero() {
   return (
     <section className="max-w-6xl mx-auto px-6 pt-16 pb-20 grid md:grid-cols-2 gap-12 items-center">
       <div>
+        <Image
+          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&h=400&fit=crop&q=80"
+          alt="Consultorio dental moderno en Belgrano, CABA"
+          width={600}
+          height={400}
+          priority
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="rounded-xl2 w-full h-auto object-cover mb-8"
+        />
         <p className="font-mono text-xs tracking-wide text-gold-dark uppercase mb-4">
-          {/* TODO: reemplazar por la ciudad o barrio real */}
-          Atención dental en tu ciudad
+          Atención dental en Belgrano, CABA
         </p>
         <h1 className="font-display text-4xl md:text-5xl font-medium leading-tight mb-6">
           Tu próximo turno, en menos de un minuto.
@@ -22,7 +31,6 @@ export default function Hero() {
           >
             Reservar turno ahora
           </a>
-          {/* WhatsApp */}
           <a
             href="https://wa.me/5491145678900"
             className="rounded-full border border-ink/20 px-6 py-3 text-sm font-medium hover:border-ink/40 transition-colors"

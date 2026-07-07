@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Contact() {
   const [nombre, setNombre] = useState("");
@@ -9,6 +10,7 @@ export default function Contact() {
   const [enviando, setEnviando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [error, setError] = useState("");
+  const [imgError, setImgError] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,8 +59,21 @@ export default function Contact() {
             <span className="font-medium text-ink">Horario:</span> Lunes a
             viernes 9 a 19 hs, sábados 9 a 13 hs
           </p>
-          <div className="rounded-xl2 border border-ink/10 bg-sage h-48 flex items-center justify-center text-ink/40 text-sm font-mono mt-4">
-            mapa de ubicación
+          <div className="mt-4">
+            {imgError ? (
+              <div className="rounded-xl2 border border-ink/10 bg-sage h-48 flex items-center justify-center text-ink/40 text-sm font-mono">
+                mapa de ubicación
+              </div>
+            ) : (
+              <Image
+                src="https://images.unsplash.com/photo-1629909615184-74f495363b67?w=600&h=192&fit=crop&q=80"
+                alt="Fachada del consultorio Estudio Dental Aguirre en Av. Cabildo, Belgrano"
+                width={600}
+                height={192}
+                className="rounded-xl2 w-full h-48 object-cover"
+                onError={() => setImgError(true)}
+              />
+            )}
           </div>
         </div>
 
