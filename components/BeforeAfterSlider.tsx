@@ -2,18 +2,18 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import SectionHeading from "./ui/SectionHeading";
 import SectionReveal from "./ui/SectionReveal";
 import { getBeforeAfterCases, BeforeAfterCase } from "@/lib/clinicService";
 
 const FALLBACK_CASES: BeforeAfterCase[] = [
-  { id: "1", clinic_id: "", before_url: "/images/before-after/antes.jpg", after_url: "/images/before-after/despues.jpg", title: "Caso de estética dental", description: "Transformación completa", order: 1 },
+  { id: "f1", clinic_id: "", before_url: "https://placehold.co/600x400/red/white?text=ANTES+1", after_url: "https://placehold.co/600x400/green/white?text=DESPUES+1", title: "Caso demo", description: "Transformación dental", order: 1 },
 ];
 
 export default function BeforeAfterSlider() {
   const [cases, setCases] = useState<BeforeAfterCase[]>([]);
   const [currentCase, setCurrentCase] = useState(0);
-
   const [position, setPosition] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -33,6 +33,11 @@ export default function BeforeAfterSlider() {
   }, []);
 
   const displayCases = cases.length > 0 ? cases : FALLBACK_CASES;
+
+  // Resetear posición del slider cuando cambiamos de caso
+  useEffect(() => {
+    setPosition(50);
+  }, [currentCase]);
 
   const updatePosition = useCallback((clientX: number) => {
     if (!containerRef.current) return;
@@ -65,6 +70,14 @@ export default function BeforeAfterSlider() {
     }
   }, []);
 
+  const goToPrevCase = () => {
+    setCurrentCase((prev) => (prev === 0 ? displayCases.length - 1 : prev - 1));
+  };
+
+  const goToNextCase = () => {
+    setCurrentCase((prev) => (prev === displayCases.length - 1 ? 0 : prev + 1));
+  };
+
   return (
     <section id="antes-despues" className="py-20 md:py-28 gradient-section scroll-mt-24">
       <div className="max-w-6xl mx-auto px-5 sm:px-6">
@@ -78,6 +91,53 @@ export default function BeforeAfterSlider() {
 
         <SectionReveal delay={0.15}>
           <div className="max-w-3xl mx-auto">
+            {/* Navegación entre casos */}
+            {displayCases.length > 1 && (
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={goToPrevCase}
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-ink/5 hover:bg-ink/10 transition-colors"
+                  aria-label="Caso anterior"
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <path d="M12 5l-5 5 5 5" />
+                  </svg>
+                </button>
+
+                <div className="flex gap-1.5">
+                  {displayCases.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentCase(i)}
+                      className={`w-2 h-2 rounded-full transition-all ${i === currentCase ? "bg-gold w-6" : "bg-ink/20 hover:bg-ink/30"
+                        }`}
+                      aria-label={`Ir al caso ${i + 1}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  onClick={goToNextCase}
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-ink/5 hover:bg-ink/10 transition-colors"
+                  aria-label="Caso siguiente"
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <path d="M8 5l5 5-5 5" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            {/* Título del caso actual */}
+            <div className="text-center mb-4">
+              <h3 className="font-display text-lg font-medium text-ink">
+                {displayCases[currentCase].title || "Transformación dental"}
+              </h3>
+              {displayCases[currentCase].description && (
+                <p className="text-sm text-ink/50 mt-1">{displayCases[currentCase].description}</p>
+              )}
+            </div>
+
             <div
               ref={containerRef}
               role="slider"

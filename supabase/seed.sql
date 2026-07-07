@@ -123,8 +123,20 @@ INSERT INTO clinic_faqs (id, clinic_id, question, answer, "order") VALUES
     ('55555555-5555-5555-5555-555555555557', '11111111-1111-1111-1111-111111111111', '¿Aceptan obras sociales?', 'Sí, trabajamos con las principales obras sociales. Consultanos por tu cobertura.', 3)
 ON CONFLICT (id) DO NOTHING;
 
--- NOTAS DE INSTALACIÓN:
--- 1. Habilitar RLS (Row Level Security) en Supabase si se desea protección adicional
--- 2. Las credenciales de Twilio van en .env, NO en la base de datos
--- 3. Cada nueva clínica: clonar repo + nuevo proyecto Supabase + ejecutar este SQL
--- 4. Modificar los datos de ejemplo con la información real del cliente
+-- Casos antes/después de ejemplo (imágenes claramente distintas para testing)
+INSERT INTO clinic_before_after (id, clinic_id, before_url, after_url, title, description, "order") VALUES
+    ('66666666-6666-6666-6666-666666666666', '11111111-1111-1111-1111-111111111111', 
+     'https://placehold.co/600x400/red/white?text=ANTES+1', 
+     'https://placehold.co/600x400/green/white?text=DESPUES+1',
+     'Caso 1: Limpieza y estética', 'Sonrisa restaurada con tratamiento de blanqueamiento'),
+    ('66666666-6666-6666-6666-666666666667', '11111111-1111-1111-1111-111111111111', 
+     'https://placehold.co/600x400/blue/white?text=ANTES+2', 
+     'https://placehold.co/600x400/purple/white?text=DESPUES+2',
+     'Caso 2: Ortodoncia', 'Alineadores transparentes transforman la sonrisa'),
+    ('66666666-6666-6666-6666-666666666668', '11111111-1111-1111-1111-111111111111', 
+     'https://placehold.co/600x400/orange/white?text=ANTES+3', 
+     'https://placehold.co/600x400/teal/white?text=DESPUES+3',
+     'Caso 3: Implantes', 'Rehabilitación completa con implantes')
+ON CONFLICT (id) DO NOTHING;
+
+
