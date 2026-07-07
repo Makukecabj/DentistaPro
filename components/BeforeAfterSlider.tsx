@@ -8,10 +8,11 @@ import SectionReveal from "./ui/SectionReveal";
 import { getBeforeAfterCases, BeforeAfterCase } from "@/lib/clinicService";
 
 const FALLBACK_CASES: BeforeAfterCase[] = [
-  { id: "f1", clinic_id: "", before_url: "https://placehold.co/600x400/ff0000/ffffff?text=ANTES+BLANQUEAMIENTO", after_url: "https://placehold.co/600x400/00ff00/ffffff?text=DESPUES+BLANQUEAMIENTO", title: "Blanqueamiento", description: "Sonrisa más blanca y brillante en 1 sesión", order: 1 },
-  { id: "f2", clinic_id: "", before_url: "https://placehold.co/600x400/0000ff/ffffff?text=ANTES+ORTODONCIA", after_url: "https://placehold.co/600x400/ff00ff/ffffff?text=DESPUES+ORTODONCIA", title: "Ortodoncia", description: "Alineadores transforman la sonrisa", order: 2 },
-  { id: "f3", clinic_id: "", before_url: "https://placehold.co/600x400/ff8800/ffffff?text=ANTES+IMPLANTES", after_url: "https://placehold.co/600x400/0088ff/ffffff?text=DESPUES+IMPLANTES", title: "Implantes", description: "Rehabilitación funcional y estética", order: 3 },
-  { id: "f4", clinic_id: "", before_url: "https://placehold.co/600x400/aa0000/ffffff?text=ANTES+LIMPIEZA", after_url: "https://placehold.co/600x400/00aa00/ffffff?text=DESPUES+LIMPIEZA", title: "Limpieza", description: "Dientes libres de placa y tartaro", order: 4 },
+  // 4 personas diferentes - cada una con su sonrisa antes/después
+  { id: "f1", clinic_id: "", before_url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb45?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1582750673913-50979bc0925c?w=600&h=400&fit=crop&q=80", title: "Blanqueamiento", description: "Sonrisa más blanca y brillante en 1 sesión", order: 1 },
+  { id: "f2", clinic_id: "", before_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1544005311-35c6e6f9a2e1?w=600&h=400&fit=crop&q=80", title: "Ortodoncia", description: "Alineadores transforman la sonrisa", order: 2 },
+  { id: "f3", clinic_id: "", before_url: "https://images.unsplash.com/photo-1599566150125-1b7e7a0b5e2c?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1576091158677-7b8dfe9d6c1a?w=600&h=400&fit=crop&q=80", title: "Implantes", description: "Rehabilitación funcional y estética", order: 3 },
+  { id: "f4", clinic_id: "", before_url: "https://images.unsplash.com/photo-1527949830967-08e6506698a5?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop&q=80", title: "Limpieza", description: "Dientes libres de placa y tartaro", order: 4 },
 ];
 
 export default function BeforeAfterSlider() {
