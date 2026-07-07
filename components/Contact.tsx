@@ -95,7 +95,7 @@ export default function Contact() {
 
               <div className="mt-6">
                 {imgError ? (
-                  <div className="rounded-2xl border border-ink/8 bg-sage/50 h-48 flex items-center justify-center text-ink/30 text-sm font-mono">
+                  <div className="rounded-2xl border border-ink/8 bg-sage/50 h-64 flex items-center justify-center text-ink/30 text-sm font-mono">
                     Av. Cabildo 2450
                   </div>
                 ) : (
@@ -104,7 +104,7 @@ export default function Contact() {
                     alt="Fachada del consultorio Estudio Dental Aguirre en Av. Cabildo, Belgrano"
                     width={600}
                     height={200}
-                    className="rounded-2xl w-full h-48 object-cover shadow-premium"
+                    className="rounded-2xl w-full h-64 object-cover shadow-premium"
                     onError={() => setImgError(true)}
                   />
                 )}
