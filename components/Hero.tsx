@@ -45,8 +45,8 @@ export default function Hero() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="relative w-full h-full">
           <Image
-            src="/images/hero/fondo.jpg"
-            alt="Consultorio dental moderno del Estudio Dental Aguirre en Belgrano"
+            src="/images/hero/salaespera.png"
+            alt="Sala de espera del Estudio Dental Aguirre en Belgrano"
             fill
             priority
             className="object-cover kenburns"

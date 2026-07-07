@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { href: "#equipo", label: "Equipo" },
   { href: "#opiniones", label: "Opiniones" },
   { href: "#contacto", label: "Contacto" },
+  { href: "/blog", label: "Blog" }, // Added Blog link
 ];
 
 const SECTION_IDS = ["servicios", "antes-despues", "equipo", "opiniones", "faq", "contacto"];
