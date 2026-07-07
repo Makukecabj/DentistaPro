@@ -8,11 +8,11 @@ import SectionReveal from "./ui/SectionReveal";
 import { getBeforeAfterCases, BeforeAfterCase } from "@/lib/clinicService";
 
 const FALLBACK_CASES: BeforeAfterCase[] = [
-  // 4 personas diferentes - cada una con su sonrisa antes/después
-  { id: "f1", clinic_id: "", before_url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb45?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1582750673913-50979bc0925c?w=600&h=400&fit=crop&q=80", title: "Blanqueamiento", description: "Sonrisa más blanca y brillante en 1 sesión", order: 1 },
-  { id: "f2", clinic_id: "", before_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1544005311-35c6e6f9a2e1?w=600&h=400&fit=crop&q=80", title: "Ortodoncia", description: "Alineadores transforman la sonrisa", order: 2 },
-  { id: "f3", clinic_id: "", before_url: "https://images.unsplash.com/photo-1599566150125-1b7e7a0b5e2c?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1576091158677-7b8dfe9d6c1a?w=600&h=400&fit=crop&q=80", title: "Implantes", description: "Rehabilitación funcional y estética", order: 3 },
-  { id: "f4", clinic_id: "", before_url: "https://images.unsplash.com/photo-1527949830967-08e6506698a5?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop&q=80", title: "Limpieza", description: "Dientes libres de placa y tartaro", order: 4 },
+  // 4 casos distintos - cada uno con su sonrisa antes/después (URLs verificadas 200)
+  { id: "f1", clinic_id: "", before_url: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=600&h=400&fit=crop&q=80", title: "Blanqueamiento", description: "Sonrisa más blanca y brillante en 1 sesión", order: 1 },
+  { id: "f2", clinic_id: "", before_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=600&h=400&fit=crop&q=80", title: "Ortodoncia", description: "Alineadores transforman la sonrisa", order: 2 },
+  { id: "f3", clinic_id: "", before_url: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&h=400&fit=crop&q=80", title: "Implantes", description: "Rehabilitación funcional y estética", order: 3 },
+  { id: "f4", clinic_id: "", before_url: "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=600&h=400&fit=crop&q=80", after_url: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop&q=80", title: "Limpieza", description: "Dientes libres de placa y tartaro", order: 4 },
 ];
 
 export default function BeforeAfterSlider() {

@@ -49,6 +49,17 @@ const FALLBACK_SERVICES: Service[] = [
   { id: "4", clinic_id: "", name: "Implantes", price: null, duration_minutes: null, description: "Por consulta", order: 4 },
 ];
 
+// Imagen temática distinta por tratamiento (URLs verificadas 200)
+const SERVICE_IMAGES: Record<string, string> = {
+  limpieza: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=500&h=400&fit=crop&q=80",
+  blanqueamiento: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=500&h=400&fit=crop&q=80",
+  ortodoncia: "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=500&h=400&fit=crop&q=80",
+  implantes: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=500&h=400&fit=crop&q=80",
+};
+
+const DEFAULT_SERVICE_IMAGE =
+  "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=500&h=400&fit=crop&q=80";
+
 const container = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12 } },
@@ -104,50 +115,53 @@ export default function Services() {
           viewport={{ once: true, margin: "-80px" }}
           className="grid sm:grid-cols-2 gap-6"
         >
-          {displayServices.map((s) => (
-            <motion.div
-              key={s.id}
-              variants={item}
-              className="group rounded-2xl overflow-hidden glass shadow-premium transition-all duration-500 hover:shadow-premium-hover hover:-translate-y-1.5"
-            >
-              <div className="relative overflow-hidden">
-                <Image
-                  src={`https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=500&h=400&fit=crop&q=80`}
-                  alt={`Servicio ${s.name}`}
-                  width={500}
-                  height={400}
-                  className="w-full h-52 object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
-                <div className="absolute top-4 right-4 bg-ink/60 backdrop-blur-sm text-paper text-[11px] font-mono tracking-wider px-3 py-1.5 rounded-full">
-                  {s.duration_minutes ? `${s.duration_minutes} min` : "Por consulta"}
-                </div>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="text-gold">{getServiceIcon(s.name)}</div>
-                  <h3 className="font-display text-xl font-medium">{s.name}</h3>
-                </div>
-                <p className="text-sm text-ink/50 leading-relaxed mb-4">{s.description || "Tratamiento profesional"}</p>
-                {s.price && (
-                  <div className="mb-4">
-                    <span className="text-[11px] font-mono tracking-wider text-gold/70 uppercase bg-gold/5 px-2.5 py-1 rounded-full">
-                      Desde ${s.price.toLocaleString()}
-                    </span>
+          {displayServices.map((s) => {
+            const imgSrc = SERVICE_IMAGES[s.name.toLowerCase()] || DEFAULT_SERVICE_IMAGE;
+            return (
+              <motion.div
+                key={s.id}
+                variants={item}
+                className="group rounded-2xl overflow-hidden glass shadow-premium transition-all duration-500 hover:shadow-premium-hover hover:-translate-y-1.5"
+              >
+                <div className="relative overflow-hidden">
+                  <Image
+                    src={imgSrc}
+                    alt={`Servicio ${s.name}`}
+                    width={500}
+                    height={400}
+                    className="w-full h-52 object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
+                  <div className="absolute top-4 right-4 bg-ink/60 backdrop-blur-sm text-paper text-[11px] font-mono tracking-wider px-3 py-1.5 rounded-full">
+                    {s.duration_minutes ? `${s.duration_minutes} min` : "Por consulta"}
                   </div>
-                )}
-                <a
-                  href={`https://wa.me/${clinicPhone}?text=${encodeURIComponent(`Hola! Quiero info sobre el tratamiento de ${s.name}`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[13px] font-medium text-gold hover:text-gold-dark transition-colors group/link"
-                >
-                  Consultá este tratamiento
-                  <span className="transition-transform group-hover/link:translate-x-0.5">&rarr;</span>
-                </a>
-              </div>
-            </motion.div>
-          ))}
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div className="text-gold">{getServiceIcon(s.name)}</div>
+                    <h3 className="font-display text-xl font-medium">{s.name}</h3>
+                  </div>
+                  <p className="text-sm text-ink/50 leading-relaxed mb-4">{s.description || "Tratamiento profesional"}</p>
+                  {s.price && (
+                    <div className="mb-4">
+                      <span className="text-[11px] font-mono tracking-wider text-gold/70 uppercase bg-gold/5 px-2.5 py-1 rounded-full">
+                        Desde ${s.price.toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                  <a
+                    href={`https://wa.me/${clinicPhone}?text=${encodeURIComponent(`Hola! Quiero info sobre el tratamiento de ${s.name}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-gold hover:text-gold-dark transition-colors group/link"
+                  >
+                    Consultá este tratamiento
+                    <span className="transition-transform group-hover/link:translate-x-0.5">&rarr;</span>
+                  </a>
+                </div>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

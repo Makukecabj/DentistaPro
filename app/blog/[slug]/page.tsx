@@ -12,7 +12,6 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import SectionReveal from "@/components/ui/SectionReveal";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import BackToTop from "@/components/ui/BackToTop";
 import SectionCTA from "@/components/SectionCTA";
 
 interface BlogPost {
@@ -61,7 +60,6 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           Blog post not found.
         </div>
         <Footer />
-        <BackToTop />
       </>
     );
   }
@@ -109,7 +107,6 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       </article>
       <SectionCTA text="Reservá tu consulta" />
       <Footer />
-      <BackToTop />
     </>
   );
 }

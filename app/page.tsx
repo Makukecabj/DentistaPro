@@ -15,7 +15,6 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 // import FloatingWhatsApp from "@/components/FloatingWhatsApp"; // Removed
 import ChatWidget from "@/components/ChatWidget"; // Added back
-import BackToTop from "@/components/ui/BackToTop";
 import SectionCTA from "@/components/SectionCTA";
 import SectionReveal from "@/components/ui/SectionReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -151,7 +150,6 @@ export default function Home() {
 
       <Footer />
       <ChatWidget />
-      <BackToTop />
     </main>
   );
 }

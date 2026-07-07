@@ -123,23 +123,23 @@ INSERT INTO clinic_faqs (id, clinic_id, question, answer, "order") VALUES
     ('55555555-5555-5555-5555-555555555557', '11111111-1111-1111-1111-111111111111', '¿Aceptan obras sociales?', 'Sí, trabajamos con las principales obras sociales. Consultanos por tu cobertura.', 3)
 ON CONFLICT (id) DO NOTHING;
 
--- Casos antes/después de ejemplo (4 tratamientos distintos)
+-- Casos antes/después de ejemplo (4 tratamientos distintos) - URLs verificadas (200)
 INSERT INTO clinic_before_after (id, clinic_id, before_url, after_url, title, description, "order") VALUES
-    ('66666666-6666-6666-6666-666666666666', '11111111-1111-1111-1111-111111111111', 
-     'https://placehold.co/600x400/ff0000/ffffff?text=ANTES+BLANQUEAMIENTO', 
-     'https://placehold.co/600x400/00ff00/ffffff?text=DESPUES+BLANQUEAMIENTO',
+    ('66666666-6666-6666-6666-666666666666', '11111111-1111-1111-1111-111111111111',
+     'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=400&fit=crop&q=80',
+     'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=600&h=400&fit=crop&q=80',
      'Blanqueamiento', 'Sonrisa más blanca y brillante en 1 sesión'),
-    ('66666666-6666-6666-6666-666666666667', '11111111-1111-1111-1111-111111111111', 
-     'https://placehold.co/600x400/0000ff/ffffff?text=ANTES+ORTODONCIA', 
-     'https://placehold.co/600x400/ff00ff/ffffff?text=DESPUES+ORTODONCIA',
+    ('66666666-6666-6666-6666-666666666667', '11111111-1111-1111-1111-111111111111',
+     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop&q=80',
+     'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=600&h=400&fit=crop&q=80',
      'Ortodoncia', 'Alineadores transforman la sonrisa'),
-    ('66666666-6666-6666-6666-666666666668', '11111111-1111-1111-1111-111111111111', 
-     'https://placehold.co/600x400/ff8800/ffffff?text=ANTES+IMPLANTES', 
-     'https://placehold.co/600x400/0088ff/ffffff?text=DESPUES+IMPLANTES',
+    ('66666666-6666-6666-6666-666666666668', '11111111-1111-1111-1111-111111111111',
+     'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&h=400&fit=crop&q=80',
+     'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&h=400&fit=crop&q=80',
      'Implantes', 'Rehabilitación funcional y estética'),
-    ('66666666-6666-6666-6666-666666666669', '11111111-1111-1111-1111-111111111111', 
-     'https://placehold.co/600x400/aa0000/ffffff?text=ANTES+LIMPIEZA', 
-     'https://placehold.co/600x400/00aa00/ffffff?text=DESPUES+LIMPIEZA',
+    ('66666666-6666-6666-6666-666666666669', '11111111-1111-1111-1111-111111111111',
+     'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=600&h=400&fit=crop&q=80',
+     'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop&q=80',
      'Limpieza', 'Dientes libres de placa y tartaro')
 ON CONFLICT (id) DO NOTHING;
 
