@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -34,7 +34,7 @@ interface BlogPostPreview {
 const MOCK_POSTS: BlogPostPreview[] = [
   {
     slug: "visitas-regulares-dentista",
-    title: "La Importancia de las Visitas Regulares al Dentista",
+    title: "La Importancia de las Visitas Regulares al Dr. John",
     date: "15 Ene 2023",
     excerpt: "Descubrí por qué las revisiones periódicas son clave para una salud bucal óptima y una sonrisa radiante.",
   },
@@ -104,7 +104,7 @@ export default function Home() {
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     onError={(e) => {
                       (e.target as HTMLImageElement).onerror = null;
-                      (e.target as HTMLImageElement).src = '/images/blog/default-post.jpg';
+                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1200&h=675&fit=crop&q=80';
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent" />

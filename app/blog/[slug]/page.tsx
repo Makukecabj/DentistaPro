@@ -1,10 +1,12 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import fs from "fs";
+import path from "path";
 import Image from "next/image";
-import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
-import ReactMarkdown from 'react-markdown'; // Need to install react-markdown
+import matter from "gray-matter";
+import ReactMarkdown from "react-markdown";
+
+const BLOG_FALLBACK_IMG =
+  "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1200&h=675&fit=crop&q=80";
+
 
 import SectionHeading from "@/components/ui/SectionHeading";
 import SectionReveal from "@/components/ui/SectionReveal";
@@ -22,45 +24,45 @@ interface BlogPost {
   content: string;
 }
 
-export default function BlogPostPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
+function getPost(slug: string): BlogPost | null {
+  const filePath = path.join(process.cwd(), "content", "blog", `${slug}.md`);
+  if (!fs.existsSync(filePath)) return null;
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      if (!slug) return;
-      try {
-        // Simulate fetching markdown content based on slug
-        // In a real app, this would fetch from /content/blog/{slug}.md
-        const response = await fetch(`/api/blog/${slug}`);
-        if (!response.ok) throw new Error('Post not found');
-        const data: BlogPost = await response.json();
-        setPost(data);
-      } catch (error) {
-        console.error("Error fetching blog post:", error);
-        setPost(null); // Ensure post is null on error
-      } finally {
-        setLoading(false);
-      }
-    };
+  const raw = fs.readFileSync(filePath, "utf8");
+  const { data, content } = matter(raw);
 
-    fetchPost();
-  }, [slug]);
+  return {
+    slug,
+    title: data.title ?? slug,
+    date: data.date ?? "",
+    author: data.author ?? "",
+    excerpt: data.excerpt ?? "",
+    content,
+  };
+}
 
-  if (!slug) {
-    return <div>No blog post slug found.</div>;
-  }
+export function generateStaticParams() {
+  const dir = path.join(process.cwd(), "content", "blog");
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => ({ slug: f.replace(/\.md$/, "") }));
+}
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">Loading...</div>
-    );
-  }
+export default function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = getPost(params.slug);
 
   if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center">Blog post not found.</div>
+      <>
+        <Header />
+        <div className="min-h-screen flex items-center justify-center">
+          Blog post not found.
+        </div>
+        <Footer />
+        <BackToTop />
+      </>
     );
   }
 
@@ -88,23 +90,18 @@ export default function BlogPostPage() {
           <SectionReveal delay={0.1}>
             <div className="relative h-[300px] md:h-[450px] w-full mb-8 rounded-2xl overflow-hidden shadow-premium">
               <Image
-                src={`/images/blog/${post.slug}.jpg`}
+                src={BLOG_FALLBACK_IMG}
                 alt={post.title}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 768px"
-                onError={(e) => {
-                  // Fallback image logic if needed
-                  (e.target as HTMLImageElement).onerror = null;
-                  (e.target as HTMLImageElement).src = '/images/blog/default-post.jpg';
-                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent" />
             </div>
           </SectionReveal>
 
           <SectionReveal delay={0.2}>
-            <div className="prose max-w-none text-ink/70 leading-relaxed text-[15px]">
+            <div className="prose prose-stone max-w-none text-ink/70 leading-relaxed text-[15px] prose-headings:font-display prose-headings:text-ink prose-a:text-gold">
               <ReactMarkdown>{post.content}</ReactMarkdown>
             </div>
           </SectionReveal>

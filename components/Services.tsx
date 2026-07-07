@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -18,7 +18,7 @@ const SERVICES = [
       </svg>
     ),
     imgSrc: "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=500&h=400&fit=crop&q=80",
-    alt: "Dentista realizando limpieza dental con espejo y sonda",
+    alt: "Dr. John realizando limpieza dental con espejo y sonda",
   },
   {
     name: "Blanqueamiento",
@@ -61,7 +61,7 @@ const SERVICES = [
       </svg>
     ),
     imgSrc: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=500&h=400&fit=crop&q=80",
-    alt: "Dentista analizando radiografías de implantes dentales",
+    alt: "Dr. John analizando radiografías de implantes dentales",
   },
 ];
 
@@ -138,7 +138,7 @@ export default function Services() {
                   ))}
                 </ul>
                 <a
-                  href="https://wa.me/5491147802233?text=Hola!%20Quiero%20info%20sobre%20el%20tratamiento%20de%20{{s.name}}"
+                  href={`https://wa.me/5491147802233?text=${encodeURIComponent(`Hola! Quiero info sobre el tratamiento de ${s.name}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-[13px] font-medium text-gold hover:text-gold-dark transition-colors group/link"

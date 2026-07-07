@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -141,7 +141,7 @@ export default function Hero() {
             className="flex flex-wrap gap-3 mb-10"
           >
             <a
-              href="#turno"
+              href="#contacto"
               className="group relative rounded-full bg-gold px-10 py-5 text-[15px] font-semibold text-ink transition-all duration-300 hover:bg-gold-dark hover:text-paper hover:shadow-glow-lg hover:scale-[1.03] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-gold-light focus-visible:ring-offset-2 focus-visible:ring-offset-ink overflow-hidden"
             >
               <span className="relative z-10 flex items-center gap-2">

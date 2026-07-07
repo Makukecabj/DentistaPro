@@ -129,7 +129,7 @@ export default function Contact() {
 
               <div className="rounded-2xl overflow-hidden shadow-premium border border-ink/5 h-64">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.5!2d-58.4531!3d-34.5625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sAv.+Cabildo+2450,+Belgrano,+CABA!5e0!3m2!1ses!2sar!4v1"
+                  src="https://www.google.com/maps?q=Av.+Cabildo+2450,+Belgrano,+CABA&output=embed"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

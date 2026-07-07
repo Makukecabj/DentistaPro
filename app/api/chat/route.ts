@@ -74,16 +74,6 @@ export async function POST(req: NextRequest) {
 
     const userMessage = messages[messages.length - 1]?.content || "";
 
-    const hasGroqKey = !!process.env.GROQ_API_KEY;
-    const hasOpenAIKey = !!process.env.OPENAI_API_KEY;
-
-    // Debug: si el usuario escribe "estado", mostramos configuración sin exponer claves
-    if (userMessage.trim().toLowerCase() === "estado") {
-      return NextResponse.json({
-        reply: `Configuración actual: Groq=${hasGroqKey ? "sí" : "no"}, OpenAI=${hasOpenAIKey ? "sí" : "no"}.`,
-      });
-    }
-
     // --- MODO CON IA (Groq o OpenAI) ---
     const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
     if (apiKey) {

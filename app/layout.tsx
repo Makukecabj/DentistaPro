@@ -23,7 +23,7 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const siteUrl = "https://dentista-pro-bice.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dentista-pro-bice.vercel.app";
 
 export const metadata: Metadata = {
   title: {

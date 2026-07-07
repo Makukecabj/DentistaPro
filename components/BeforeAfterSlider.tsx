@@ -73,8 +73,8 @@ export default function BeforeAfterSlider() {
             >
               <div className="absolute inset-0">
                 <Image
-                  src="/images/before-after/despues.jpg"
-                  alt="Después del tratamiento dental - sonrisa brillante"
+                  src="/images/before-after/antes.jpg"
+                  alt="Antes del tratamiento dental"
                   fill
                   className="object-cover"
                 />
@@ -85,8 +85,8 @@ export default function BeforeAfterSlider() {
                 style={{ width: `${position}%` }}
               >
                 <Image
-                  src="/images/before-after/antes.jpg"
-                  alt="Antes del tratamiento dental"
+                  src="/images/before-after/despues.jpg"
+                  alt="Después del tratamiento dental - sonrisa brillante"
                   fill
                   className="object-cover"
                   style={{ width: "100%", minWidth: "100%" }}

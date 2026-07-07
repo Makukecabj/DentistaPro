@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,7 +8,7 @@ const NAV_ITEMS = [
   { href: "#equipo", label: "Equipo" },
   { href: "#opiniones", label: "Opiniones" },
   { href: "#contacto", label: "Contacto" },
-  { href: "/blog", label: "Blog" }, // Added Blog link
+  { href: "/blog", label: "Blog" },
 ];
 
 const SECTION_IDS = ["servicios", "antes-despues", "equipo", "opiniones", "faq", "contacto"];
@@ -53,7 +53,9 @@ export default function Header() {
     } else {
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   const handleNavClick = useCallback(() => {
@@ -63,13 +65,14 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "glass-strong shadow-soft py-3"
-          : "bg-transparent py-4"
+        scrolled ? "glass-strong shadow-soft py-3" : "bg-transparent py-4"
       }`}
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-6 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2 font-display text-lg font-medium tracking-tight text-ink hover:text-teal-dark transition-colors">
+        <a
+          href="#"
+          className="flex items-center gap-2 font-display text-lg font-medium tracking-tight text-ink hover:text-teal-dark transition-colors"
+        >
           <svg className="w-7 h-7 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M12 2C6.48 2 2 6 2 10.5c0 2.5 1.5 5 3 6.5l-1 5 5-2c1.3.7 2.6 1 4 1 5.52 0 10-4 10-8.5S17.52 2 12 2z" />
             <circle cx="8.5" cy="10.5" r="1" fill="currentColor" stroke="none" />
@@ -112,7 +115,7 @@ export default function Header() {
           </a>
 
           <a
-            href="#turno"
+            href="#contacto"
             className="hidden md:inline-flex rounded-full bg-gold text-ink text-[13px] font-semibold px-6 py-2.5 hover:bg-gold-dark hover:text-paper hover:shadow-glow transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
           >
             Reservar turno
@@ -166,9 +169,7 @@ export default function Header() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.05 }}
                     className={`text-base font-medium transition-colors py-2.5 px-3 rounded-lg ${
-                      isActive
-                        ? "text-gold bg-gold/5"
-                        : "text-ink/70 hover:text-ink hover:bg-ink/5"
+                      isActive ? "text-gold bg-gold/5" : "text-ink/70 hover:text-ink hover:bg-ink/5"
                     }`}
                   >
                     {item.label}
@@ -176,7 +177,7 @@ export default function Header() {
                 );
               })}
               <motion.a
-                href="#turno"
+                href="#contacto"
                 onClick={handleNavClick}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
