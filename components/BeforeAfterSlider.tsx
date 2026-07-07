@@ -4,7 +4,7 @@ import Image from "next/image";
 import SectionHeading from "./ui/SectionHeading";
 import SectionReveal from "./ui/SectionReveal";
 
-const LIMPIEZA_IMG = "/images/blog/limpieza.webp";
+const LIMPIEZA_IMG = "/images/blog/limpieza.jpg";
 
 export default function BeforeAfterSlider() {
   return (
@@ -25,7 +25,7 @@ export default function BeforeAfterSlider() {
                 src={LIMPIEZA_IMG}
                 alt="Limpieza dental profesional"
                 width={839}
-                height={280}
+                height={256}
                 className="w-full h-auto object-contain"
               />
             </div>
