@@ -10,7 +10,7 @@ type Message = {
 
 const INITIAL_MESSAGE: Message = {
   role: "bot",
-  text: "Hola, soy el asistente de Estudio Dental Aguirre. ¿Querés reservar un turno? Elegí el día y te confirmo al toque.",
+  text: "Hola, soy el asistente del Dr. Martín Aguirre. ¿Necesitás un turno? Contame qué día te viene bien.",
 };
 
 export default function ChatWidget() {
@@ -73,7 +73,7 @@ export default function ChatWidget() {
         onClick={() => setOpen(!open)}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-gold text-ink shadow-elevated flex items-center justify-center hover:shadow-glow-lg transition-shadow duration-300"
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gold text-ink shadow-elevated flex items-center justify-center hover:shadow-glow-lg transition-shadow duration-300"
         aria-label={open ? "Cerrar chat" : "Abrir chat de turnos"}
       >
         <AnimatePresence mode="wait">
@@ -138,7 +138,7 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-            className="fixed bottom-24 left-6 z-40 w-[340px] max-w-[calc(100vw-3rem)] rounded-2xl border border-ink/8 bg-white shadow-elevated overflow-hidden flex flex-col"
+            className="fixed bottom-24 right-6 z-40 w-[340px] max-w-[calc(100vw-3rem)] rounded-2xl border border-ink/8 bg-white shadow-elevated overflow-hidden flex flex-col"
           >
             <div className="gradient-dark text-paper px-5 py-3.5 flex items-center gap-2.5">
               <span className="relative flex h-2.5 w-2.5">
@@ -160,11 +160,10 @@ export default function ChatWidget() {
                   className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`rounded-2xl px-4 py-2.5 text-sm max-w-[85%] ${
-                      m.role === "user"
-                        ? "bg-ink text-paper rounded-br-md"
-                        : "bg-sage/60 text-ink rounded-bl-md"
-                    }`}
+                    className={`rounded-2xl px-4 py-2.5 text-sm max-w-[85%] ${m.role === "user"
+                      ? "bg-ink text-paper rounded-br-md"
+                      : "bg-sage/60 text-ink rounded-bl-md"
+                      }`}
                   >
                     {m.text}
                   </div>

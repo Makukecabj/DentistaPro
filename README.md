@@ -1,8 +1,6 @@
-# Estudio Dental Aguirre — Web pro
+# Estudio Dental Aguirre — Web Pro
 
-Proyecto Next.js 14 (App Router) + TypeScript + Tailwind, pensado como base
-para el paquete "pro" (web + chatbot de turnos). El diseño y la estructura
-ya están armados; lo que falta es contenido real y conectar los servicios.
+Proyecto Next.js 14 (App Router) + TypeScript + Tailwind, pensado como **template base** para clonar por cada cliente. La landing y el chatbot están preparados para leer datos dinámicos desde Supabase.
 
 ## Cómo correrlo en local
 
@@ -13,61 +11,130 @@ npm run dev
 
 Abrí http://localhost:3000
 
-## Estructura
+## Estructura del proyecto
 
 ```
 app/
   layout.tsx        fuentes y metadata global
   page.tsx           arma la página con todas las secciones
-  api/chat/route.ts  endpoint del chatbot (hoy es un mock guionado)
+  api/chat/route.ts  endpoint del chatbot con contexto dinámico
+  api/services/route.ts endpoint público para datos de la clínica
+
 components/          cada sección de la web, un componente por archivo
-lib/supabaseClient.ts cliente de Supabase listo para usar
+  Services.tsx       ahora lee servicios desde Supabase
+  FAQ.tsx            ahora lee FAQs desde Supabase
+  Team.tsx           ahora lee equipo desde Supabase
+  BeforeAfterSlider.tsx lee casos desde Supabase
+
+lib/
+  supabaseClient.ts  cliente de Supabase (anon + service)
+  clinicService.ts   helpers para fetch de datos clínicos
+
+supabase/
+  seed.sql           script de inicialización de tablas
 ```
 
-## Qué es real y qué es mock
+## Arquitectura: Template por cliente
 
-- El **diseño, la estructura y el slider de antes/después** son funcionales.
-- El **chatbot de turnos** (`ChatWidget.tsx` + `app/api/chat/route.ts`) hoy
-  sigue un guion fijo de 4 pasos para que puedas mostrar el flujo completo
-  a un cliente. No llama a ninguna IA real ni guarda nada todavía.
+Este proyecto es un **template que se clona** para cada nueva clínica:
 
-## TODOs antes de vender esto como versión final
+1. `git clone` del repo
+2. Crear nuevo proyecto en Supabase
+3. Ejecutar `supabase/seed.sql` 
+4. Configurar `.env.local` con las credenciales
+5. Deploy en Vercel
 
-1. **Contenido real**: buscá `TODO` en el código (Header, Hero, Services,
-   Team, Reviews, Contact, Footer) y reemplazá los textos de ejemplo por
-   los datos reales del consultorio (nombre, dirección, WhatsApp, servicios,
-   profesionales, reseñas).
-2. **Fotos de antes/después**: en `BeforeAfterSlider.tsx` reemplazá los dos
-   bloques de color por las imágenes reales, manteniendo la misma estructura
-   de capas (una encima de la otra, recortada por el ancho del slider).
-3. **Chatbot real**: en `app/api/chat/route.ts`, cambiar el mock por:
-   - una llamada a la API de un modelo de IA (OpenAI, Anthropic, etc.) para
-     que la conversación sea libre y no un guion fijo
-   - la escritura del turno confirmado en una tabla de Supabase
-   - la creación del evento en Google Calendar del profesional
-   - una validación de que el horario elegido sigue libre antes de confirmar
-4. **Supabase**: crear el proyecto, definir las tablas (por ejemplo
-   `turnos`, `pacientes`), activar Row Level Security (RLS) y completar las
-   variables de entorno.
-5. **Variables de entorno**: copiar `.env.example` a `.env.local` y
-   completar los valores. Nunca subir `.env.local` a GitHub (ya está en
-   `.gitignore`).
+Cada clínica tiene su propia instalación independiente (no multi-tenant).
 
-## Deploy en Vercel
+## Tablas de Supabase
 
-1. Subí este proyecto a un repo de GitHub.
-2. En [vercel.com](https://vercel.com), Add New → Project → importá el repo.
-3. Vercel detecta Next.js automáticamente, no hace falta configurar nada más.
-4. En Settings → Environment Variables, cargá las mismas variables de
-   `.env.example` con sus valores reales.
-5. Deploy. Cada push a la rama principal actualiza el sitio en producción.
+### Tabla `clinic` (única fila)
+- `name`, `phone`, `whatsapp`, `address`
+- `map_lat`, `map_lng`, `logo_url`, `primary_color`
+- `cancellation_policy`
+- `business_hours` (JSONB): `{"1": [9,19], "2": [9,18]}` (1=Lun...7=Dom)
 
-## Paleta y tipografía usadas
+### Tablas relacionadas
+- `clinic_services`: servicios con precios y duración
+- `clinic_insurance`: obras sociales y coberturas
+- `clinic_team`: dentistas y especialidades
+- `clinic_faqs`: preguntas frecuentes
+- `clinic_before_after`: casos antes/después
+- `turnos`: turnos reservados (ya existente)
 
-- Colores: `ink` #17302B (verde pino), `paper` #F6F4EF (fondo cálido),
-  `sage` #E4ECE6, `gold` #C9974A (acento), `teal` #2F6B5E.
-- Tipografías: Fraunces (títulos), Inter (texto), IBM Plex Mono (etiquetas
-  y detalles tipo "en línea", números, eyebrows).
+## Variables de entorno (.env.local)
 
-Todo esto está centralizado en `tailwind.config.ts`, así que cambiar la
-paleta o las fuentes para otro cliente es editar un solo archivo.
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# IA (Groq o OpenAI)
+GROQ_API_KEY=
+# o
+OPENAI_API_KEY=
+
+# Twilio (para recordatorios - opcional)
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_WHATSAPP_FROM=
+
+# Google Calendar (opcional)
+GOOGLE_CALENDAR_CLIENT_ID=
+GOOGLE_CALENDAR_CLIENT_SECRET=
+```
+
+## Setup para nueva clínica
+
+1. **Clonar el repo**
+   ```bash
+   git clone <repo-url> nuevo-cliente
+   cd nuevo-cliente
+   ```
+
+2. **Crear proyecto en Supabase** y ejecutar `supabase/seed.sql`
+
+3. **Editar los datos de ejemplo** en Supabase:
+   - `clinic` → actualizar nombre, horarios, contacto
+   - `clinic_services` → servicios reales con precios
+   - `clinic_team` → fotos y biografías
+   - `clinic_faqs` → preguntas reales del consultorio
+
+4. **Editar todo el contenido hardcodeado** que quede en componentes:
+   - Hero.tsx → texto principal
+   - BeforeAfterSlider.tsx → imágenes
+   - SocialProof.tsx → reseñas
+
+5. **Deploy en Vercel** con las variables de entorno
+
+## Flujo del Chatbot
+
+El chatbot (`/api/chat/route.ts`) ahora:
+
+1. **Lee el perfil de la clínica** desde Supabase al inicio
+2. **Genera horarios dinámicamente** según `business_hours`
+3. **Construye system prompt** con nombre, horarios, políticas
+4. **Guarda turnos** en la tabla `turnos`
+
+## Roadmap de features
+
+### Fase 1 - Agenda
+- [ ] Recordatorio automático 24hs antes (WhatsApp)
+- [ ] Reprogramar/cancelar turno desde el chat
+- [ ] Lista de espera automática
+
+### Fase 2 - Pre-consulta
+- [ ] Formulario de anamnesis antes del turno
+- [ ] Calculadora de cobertura dinámica
+
+### Fase 3 - Fidelización
+- [ ] Pedido de reseña post-turno
+- [ ] Recordatorio de control semestral
+
+## Paleta y tipografía
+
+- Colores: `ink` #17302B (verde pino), `paper` #F6F4EF, `sage` #E4ECE6, `gold` #C9974A, `teal` #2F6B5E
+- Tipografías: Fraunces (títulos), Inter (texto), IBM Plex Mono (etiquetas)
+
+La personalización de marca se hace desde Supabase (`primary_color`, `logo_url`).

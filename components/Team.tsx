@@ -1,37 +1,11 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import SectionHeading from "./ui/SectionHeading";
 import SectionReveal from "./ui/SectionReveal";
-
-const TEAM = [
-  {
-    name: "Dra. Valentina Aguirre",
-    role: "Odontóloga general · Directora",
-    specialty: "Estética dental y rehabilitación oral",
-    university: "Universidad de Buenos Aires",
-    experience: "15+ años",
-    imgSrc: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&h=300&fit=crop&q=80",
-  },
-  {
-    name: "Dr. Martín Ferreyra",
-    role: "Ortodoncista",
-    specialty: "Ortodoncia invisible y brackets estéticos",
-    university: "Universidad de Buenos Aires",
-    experience: "12+ años",
-    imgSrc: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&h=300&fit=crop&q=80",
-  },
-  {
-    name: "Dra. Camila Sosa",
-    role: "Especialista en implantes",
-    specialty: "Implantología y cirugía oral",
-    university: "Universidad de Buenos Aires",
-    experience: "10+ años",
-    imgSrc: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=300&h=300&fit=crop&q=80",
-  },
-];
+import { TeamMember } from "@/lib/clinicService";
 
 function getInitials(name: string) {
   return name
@@ -52,8 +26,14 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const } },
 };
 
-function TeamCard({ name, role, specialty, university, experience, imgSrc }: { name: string; role: string; specialty: string; university: string; experience: string; imgSrc: string }) {
+// Fallback si Supabase no está configurado (dentista particular)
+const FALLBACK_TEAM: TeamMember[] = [
+  { id: "1", clinic_id: "", name: "Dr. Martín Aguirre", specialty: "Odontólogo", photo_url: null, bio: "Especialista con 15 años de experiencia", order: 1 },
+];
+
+function TeamCard({ member }: { member: TeamMember }) {
   const [imgError, setImgError] = useState(false);
+  const imgSrc = member.photo_url || `https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&h=300&fit=crop&q=80`;
 
   return (
     <motion.div
@@ -64,7 +44,7 @@ function TeamCard({ name, role, specialty, university, experience, imgSrc }: { n
         {imgError ? (
           <div className="w-28 h-28 rounded-full bg-sage flex items-center justify-center">
             <span className="font-mono text-lg text-teal-dark font-medium">
-              {getInitials(name)}
+              {getInitials(member.name)}
             </span>
           </div>
         ) : (
@@ -72,7 +52,7 @@ function TeamCard({ name, role, specialty, university, experience, imgSrc }: { n
             <div className="absolute inset-0 rounded-full border-2 border-gold/0 scale-110 group-hover:border-gold/40 group-hover:scale-100 transition-all duration-500" />
             <Image
               src={imgSrc}
-              alt={`Foto de ${name}`}
+              alt={`Foto de ${member.name}`}
               width={112}
               height={112}
               className="w-28 h-28 rounded-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -81,43 +61,49 @@ function TeamCard({ name, role, specialty, university, experience, imgSrc }: { n
           </>
         )}
       </div>
-      <h3 className="font-display text-lg font-medium mb-1">{name}</h3>
-      <p className="font-mono text-[11px] tracking-[0.15em] text-ink/45 uppercase mb-3">{role}</p>
-      <div className="space-y-2">
-        <div className="flex items-center justify-center gap-1.5 text-[13px] text-ink/50">
-          <svg className="w-3.5 h-3.5 text-gold shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M3 8l3.5 3.5L13 5" />
-          </svg>
-          {specialty}
-        </div>
-        <div className="flex items-center justify-center gap-1.5 text-[12px] text-ink/35">
-          <svg className="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M2 6l6-4 6 4v7a1 1 0 01-1 1H3a1 1 0 01-1-1V6z" />
-            <path d="M6 14V9h4v5" />
-          </svg>
-          {university}
-        </div>
-        <div className="flex items-center justify-center gap-1.5 text-[12px] text-teal/60 font-medium">
-          <svg className="w-3 h-3 shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <circle cx="8" cy="8" r="6.5" />
-            <path d="M8 4.5V8l2.5 1.5" />
-          </svg>
-          {experience}
-        </div>
-      </div>
+      <h3 className="font-display text-lg font-medium mb-1">{member.name}</h3>
+      <p className="font-mono text-[11px] tracking-[0.15em] text-ink/45 uppercase mb-3">{member.specialty || "Odontólogo"}</p>
+      {member.bio && (
+        <p className="text-[13px] text-ink/50 leading-relaxed">{member.bio}</p>
+      )}
     </motion.div>
   );
 }
 
 export default function Team() {
+  const [team, setTeam] = useState<TeamMember[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("/api/services");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.team?.length > 0) {
+            setTeam(data.team);
+          }
+        }
+      } catch {
+        // Usar fallback por defecto
+      }
+    }
+    fetchData();
+  }, []);
+
+  // Solo mostrar sección si hay datos desde Supabase (que el dentista cargue su info)
+  // Si no hay Supabase, no mostramos la sección "sobre mí"
+  if (team.length === 0) return null;
+
+  const displayTeam = team;
+
   return (
-    <section id="equipo" className="py-20 md:py-28 scroll-mt-24">
+    <section id="sobre-mi" className="py-20 md:py-28 scroll-mt-24">
       <div className="max-w-6xl mx-auto px-5 sm:px-6">
         <SectionReveal>
           <SectionHeading
-            eyebrow="Equipo"
-            title="Nuestro equipo"
-            subtitle="Profesionales con experiencia que se dedican a que sonrías con confianza."
+            eyebrow="Sobre mí"
+            title="Dr. Martín Aguirre"
+            subtitle="Odontólogo especializado en atención personalizada y tratamientos de alta calidad."
           />
         </SectionReveal>
 
@@ -126,11 +112,13 @@ export default function Team() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid sm:grid-cols-3 gap-6"
+          className="flex justify-center"
         >
-          {TEAM.map((person) => (
-            <TeamCard key={person.name} {...person} />
-          ))}
+          <div className="max-w-sm">
+            {displayTeam.map((member) => (
+              <TeamCard key={member.id} member={member} />
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>

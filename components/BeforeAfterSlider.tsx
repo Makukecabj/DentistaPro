@@ -1,14 +1,38 @@
 ﻿"use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import SectionHeading from "./ui/SectionHeading";
 import SectionReveal from "./ui/SectionReveal";
+import { getBeforeAfterCases, BeforeAfterCase } from "@/lib/clinicService";
+
+const FALLBACK_CASES: BeforeAfterCase[] = [
+  { id: "1", clinic_id: "", before_url: "/images/before-after/antes.jpg", after_url: "/images/before-after/despues.jpg", title: "Caso de estética dental", description: "Transformación completa", order: 1 },
+];
 
 export default function BeforeAfterSlider() {
+  const [cases, setCases] = useState<BeforeAfterCase[]>([]);
+  const [currentCase, setCurrentCase] = useState(0);
+
   const [position, setPosition] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
+
+  useEffect(() => {
+    async function fetchCases() {
+      try {
+        const casesData = await getBeforeAfterCases();
+        if (casesData.length > 0) {
+          setCases(casesData);
+        }
+      } catch {
+        // Usar fallback
+      }
+    }
+    fetchCases();
+  }, []);
+
+  const displayCases = cases.length > 0 ? cases : FALLBACK_CASES;
 
   const updatePosition = useCallback((clientX: number) => {
     if (!containerRef.current) return;
@@ -73,7 +97,7 @@ export default function BeforeAfterSlider() {
             >
               <div className="absolute inset-0">
                 <Image
-                  src="/images/before-after/antes.jpg"
+                  src={displayCases[currentCase].before_url}
                   alt="Antes del tratamiento dental"
                   fill
                   className="object-cover"
@@ -85,7 +109,7 @@ export default function BeforeAfterSlider() {
                 style={{ width: `${position}%` }}
               >
                 <Image
-                  src="/images/before-after/despues.jpg"
+                  src={displayCases[currentCase].after_url}
                   alt="Después del tratamiento dental - sonrisa brillante"
                   fill
                   className="object-cover"

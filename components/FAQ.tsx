@@ -1,36 +1,15 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeading from "./ui/SectionHeading";
 import SectionReveal from "./ui/SectionReveal";
 
-const FAQS = [
-  {
-    q: "¿Duele un implante dental?",
-    a: "El procedimiento se realiza con anestesia local, por lo que no se siente dolor durante la colocación. Después, el malestar es leve y se controla con medicación habitual. La mayoría de pacientes retoman su rutina al día siguiente.",
-  },
-  {
-    q: "¿Cuánto dura un blanqueamiento?",
-    a: "Los resultados del blanqueamiento pueden durar entre 1 y 2 años, dependiendo de tus hábitos (café, tabaco, etc.). Te damos indicaciones personalizadas para mantener los resultados el mayor tiempo posible.",
-  },
-  {
-    q: "¿Aceptan obras sociales?",
-    a: "Sí, trabajamos con las principales obras sociales y prepagas. Consultanos por tu cobertura específica y te asesoramos sobre el alcance de tu plan.",
-  },
-  {
-    q: "¿Cómo saco turno?",
-    a: "Podés reservar tu turno de varias formas: a través de este chat, por WhatsApp al +54 11 4780-2233, o llamándonos directamente. Elegí el día y horario que mejor te quede.",
-  },
-  {
-    q: "¿Atienden emergencias?",
-    a: "Sí, ante una urgencia odontológica, contactanos por WhatsApp y te atendemos a la brevedad. Nuestro equipo está preparado para manejar emergencias dentales fuera del horario habitual.",
-  },
-  {
-    q: "¿Cuánto cuesta una limpieza dental?",
-    a: "El costo varía según la obra social o prepaga del paciente. En una primera consulta evaluamos tu caso y te informamos el presupuesto exacto antes de realizar cualquier tratamiento.",
-  },
-];
+interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+}
 
 function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
   const [open, setOpen] = useState(false);
@@ -81,6 +60,36 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
 }
 
 export default function FAQ() {
+  const [faqs, setFaqs] = useState<FAQItem[]>([]);
+  const [clinicPhone, setClinicPhone] = useState("5491147802233");
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("/api/services");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.faqs?.length > 0) {
+            setFaqs(data.faqs);
+          }
+          if (data.clinic?.whatsapp) {
+            setClinicPhone(data.clinic.whatsapp);
+          }
+        }
+      } catch {
+        // Usar fallback por defecto
+      }
+    }
+    fetchData();
+  }, []);
+
+  // Fallback FAQs si Supabase no está configurado
+  const displayFaqs = faqs.length > 0 ? faqs : [
+    { id: "1", question: "¿Cómo es el tratamiento?", answer: "Trabajo con atención personalizada y uso tecnología de última generación." },
+    { id: "2", question: "¿Duele algo?", answer: "Todo se realiza con anestesia local. La comodidad es lo primero." },
+    { id: "3", question: "¿Atienden urgencias?", answer: "Sí, consulta por WhatsApp para turnos urgentes." },
+  ];
+
   return (
     <section id="faq" className="py-20 md:py-28 gradient-section scroll-mt-24">
       <div className="max-w-3xl mx-auto px-5 sm:px-6">
@@ -95,8 +104,8 @@ export default function FAQ() {
 
         <SectionReveal delay={0.1}>
           <div className="glass rounded-2xl shadow-premium p-6 md:p-8">
-            {FAQS.map((faq, i) => (
-              <FAQItem key={i} q={faq.q} a={faq.a} index={i} />
+            {displayFaqs.map((faq, i) => (
+              <FAQItem key={faq.id} q={faq.question} a={faq.answer} index={i} />
             ))}
           </div>
         </SectionReveal>
@@ -104,7 +113,7 @@ export default function FAQ() {
         <SectionReveal delay={0.2}>
           <div className="mt-10 text-center">
             <a
-              href="https://wa.me/5491147802233?text=Hola!%20Tengo%20una%20consulta"
+              href={`https://wa.me/${clinicPhone}?text=Hola!%20Tengo%20una%20consulta`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-ink/50 hover:text-gold transition-colors"
