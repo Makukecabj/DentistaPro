@@ -49,12 +49,12 @@ const FALLBACK_SERVICES: Service[] = [
   { id: "4", clinic_id: "", name: "Implantes", price: null, duration_minutes: null, description: "Por consulta", order: 4 },
 ];
 
-// Imagen temática distinta por tratamiento (URLs verificadas 200)
+// Imagen temática distinta por tratamiento (fotos locales en /images/blog)
 const SERVICE_IMAGES: Record<string, string> = {
-  limpieza: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=500&h=400&fit=crop&q=80",
-  blanqueamiento: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=500&h=400&fit=crop&q=80",
-  ortodoncia: "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=500&h=400&fit=crop&q=80",
-  implantes: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=500&h=400&fit=crop&q=80",
+  limpieza: "/images/blog/limpiezadental.jpg",
+  blanqueamiento: "/images/blog/blanqueamiento-dental-led.jpg",
+  ortodoncia: "/images/blog/ortodoncia.jpg",
+  implantes: "/images/blog/implante.jpg",
 };
 
 const DEFAULT_SERVICE_IMAGE =
