@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import ChatWidget from "./ChatWidget";
 
 const TRUST_ITEMS = [
   { icon: "shield", text: "Tecnología digital" },
@@ -52,11 +51,12 @@ export default function Hero() {
             className="object-cover kenburns"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-br from-ink/80 via-ink/50 to-ink/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/70 to-ink/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-ink/30" />
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-6 pt-28 pb-24 grid md:grid-cols-2 gap-16 items-center w-full">
-        <div>
+      <div className="relative max-w-6xl mx-auto px-6 pt-28 pb-24 w-full">
+        <div className="max-w-2xl">
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -70,7 +70,8 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="font-display text-[2.25rem] md:text-[3.5rem] font-medium leading-[1.08] mb-6 tracking-tight"
+            className="font-display text-[2.25rem] md:text-[3.5rem] font-medium leading-[1.08] mb-6 tracking-tight text-paper"
+            style={{ textShadow: "0 2px 20px rgba(0,0,0,0.3)" }}
           >
             Tu sonrisa merece
             <br />
@@ -81,7 +82,8 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.35 }}
-            className="text-paper/70 text-lg mb-8 max-w-md leading-relaxed"
+            className="text-paper/80 text-lg mb-10 max-w-md leading-relaxed"
+            style={{ textShadow: "0 1px 10px rgba(0,0,0,0.2)" }}
           >
             Especialistas en Belgrano con tecnología de última generación.
             Reservá tu turno online en segundos.
@@ -91,7 +93,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-wrap gap-3 mb-8"
+            className="flex flex-wrap gap-3 mb-10"
           >
             <a
               href="#turno"
@@ -102,7 +104,7 @@ export default function Hero() {
             </a>
             <a
               href="https://wa.me/5491145678900"
-              className="rounded-full border border-paper/25 text-paper px-8 py-4 text-sm font-medium hover:border-paper/40 hover:bg-white/10 transition-all duration-300"
+              className="rounded-full border border-paper/30 text-paper px-8 py-4 text-sm font-medium hover:border-paper/50 hover:bg-white/10 transition-all duration-300"
             >
               WhatsApp
             </a>
@@ -115,7 +117,7 @@ export default function Hero() {
             className="flex flex-wrap gap-x-5 gap-y-2 mb-10"
           >
             {TRUST_ITEMS.map((item) => (
-              <div key={item.text} className="flex items-center gap-2 text-[13px] text-paper/55">
+              <div key={item.text} className="flex items-center gap-2 text-[13px] text-paper/65">
                 <TrustIcon icon={item.icon} />
                 <span>{item.text}</span>
               </div>
@@ -126,7 +128,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1 }}
-            className="flex items-center gap-4 text-[13px] text-paper/45"
+            className="flex items-center gap-4 text-[13px] text-paper/55"
           >
             <div className="flex items-center gap-2">
               <div className="flex gap-0.5">
@@ -138,20 +140,10 @@ export default function Hero() {
               </div>
               <span>4.9 en Google</span>
             </div>
-            <div className="w-px h-4 bg-paper/15" />
+            <div className="w-px h-4 bg-paper/20" />
             <span>Más de 500 pacientes</span>
           </motion.div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          id="turno"
-          className="flex justify-center md:justify-end scroll-mt-24"
-        >
-          <ChatWidget />
-        </motion.div>
       </div>
     </section>
   );

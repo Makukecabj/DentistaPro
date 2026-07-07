@@ -10,6 +10,7 @@ import FAQ from "@/components/FAQ";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import ChatWidget from "@/components/ChatWidget";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
 import BackToTop from "@/components/ui/BackToTop";
 
@@ -27,6 +28,7 @@ export default function Home() {
       <FAQ />
       <Contact />
       <Footer />
+      <ChatWidget />
       <FloatingWhatsApp />
       <StickyMobileCTA />
       <BackToTop />
