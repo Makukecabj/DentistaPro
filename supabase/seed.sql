@@ -123,20 +123,20 @@ INSERT INTO clinic_faqs (id, clinic_id, question, answer, "order") VALUES
     ('55555555-5555-5555-5555-555555555557', '11111111-1111-1111-1111-111111111111', '¿Aceptan obras sociales?', 'Sí, trabajamos con las principales obras sociales. Consultanos por tu cobertura.', 3)
 ON CONFLICT (id) DO NOTHING;
 
--- Casos antes/después de ejemplo (imágenes claramente distintas para testing)
+-- Casos antes/después de ejemplo (imágenes de dental real, claramente distintas)
 INSERT INTO clinic_before_after (id, clinic_id, before_url, after_url, title, description, "order") VALUES
     ('66666666-6666-6666-6666-666666666666', '11111111-1111-1111-1111-111111111111', 
-     'https://placehold.co/600x400/red/white?text=ANTES+1', 
-     'https://placehold.co/600x400/green/white?text=DESPUES+1',
-     'Caso 1: Limpieza y estética', 'Sonrisa restaurada con tratamiento de blanqueamiento'),
+     'https://images.unsplash.com/photo-1494790108377-be9c397d946e?w=600&h=400&fit=crop&q=80', 
+     'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=400&fit=crop&q=80',
+     'Caso 1: Blanqueamiento dental', 'Sonrisa más blanca y brillante en 1 sesión'),
     ('66666666-6666-6666-6666-666666666667', '11111111-1111-1111-1111-111111111111', 
-     'https://placehold.co/600x400/blue/white?text=ANTES+2', 
-     'https://placehold.co/600x400/purple/white?text=DESPUES+2',
-     'Caso 2: Ortodoncia', 'Alineadores transparentes transforman la sonrisa'),
+     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop&q=80', 
+     'https://images.unsplash.com/photo-1582750673913-50979bc0925c?w=600&h=400&fit=crop&q=80',
+     'Caso 2: Ortodoncia invisible', 'Alineadores transforman la sonrisa sin metal visible'),
     ('66666666-6666-6666-6666-666666666668', '11111111-1111-1111-1111-111111111111', 
-     'https://placehold.co/600x400/orange/white?text=ANTES+3', 
-     'https://placehold.co/600x400/teal/white?text=DESPUES+3',
-     'Caso 3: Implantes', 'Rehabilitación completa con implantes')
+     'https://images.unsplash.com/photo-1599566150125-1b7e7a0b5e2c?w=600&h=400&fit=crop&q=80', 
+     'https://images.unsplash.com/photo-1576091158677-7b8dfe9d6c1a?w=600&h=400&fit=crop&q=80',
+     'Caso 3: Implantes', 'Rehabilitación funcional y estética')
 ON CONFLICT (id) DO NOTHING;
 
 
