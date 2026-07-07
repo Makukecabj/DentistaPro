@@ -134,8 +134,9 @@ Flujo obligatorio:
 5) Cuando elija un horario, pedí su nombre completo.
 6) Después pedí el teléfono con código de país.
 7) Antes de confirmar, volvé a consultar la disponibilidad de ESE día y ESE horario.
-8) Si está libre y tenés DÍA, HORA, NOMBRE y TELÉFONO, llamá a guardar_turno.
-9) Solo si guardar_turno confirma, avisá que el turno quedó reservado y que lo van a contactar por WhatsApp.
+8) Pedí el teléfono con código de país DESPUÉS del nombre y ANTES de cualquier guardado.
+9) Solo llamá a guardar_turno cuando tengas confirmados DÍA, HORA, NOMBRE y TELÉFONO completos. Nunca lo llames con el teléfono vacío.
+10) Solo si guardar_turno confirma, avisá que el turno quedó reservado y que lo van a contactar por WhatsApp.
 
 Reglas:
 - No asumas ni inventes datos faltantes.
@@ -173,8 +174,12 @@ Reglas:
                 const disp = await consultarHorarios(args.fecha);
                 result = { horarios_disponibles: disp };
               } else if (call.function.name === "guardar_turno") {
-                await guardarTurno(args);
-                result = { ok: true, confirmado: true };
+                if (!args.telefono || !args.nombre || !args.fecha || !args.hora) {
+                  result = { error: "Faltan datos del paciente (nombre, telefono, fecha u hora). Pedí el teléfono antes de guardar." };
+                } else {
+                  await guardarTurno(args);
+                  result = { ok: true, confirmado: true };
+                }
               } else {
                 result = { error: "función desconocida" };
               }
