@@ -9,7 +9,7 @@ import SectionReveal from "./ui/SectionReveal";
 const TEAM = [
   { name: "Dra. Valentina Aguirre", role: "Odontóloga general · Directora", imgSrc: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&h=300&fit=crop&q=80" },
   { name: "Dr. Martín Ferreyra", role: "Ortodoncista", imgSrc: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&h=300&fit=crop&q=80" },
-  { name: "Dra. Camila Sosa", role: "Especialista en implantes", imgSrc: "https://images.unsplash.com/photo-1594824476967-48c8b964ac31?w=300&h=300&fit=crop&q=80" },
+  { name: "Dra. Camila Sosa", role: "Especialista en implantes", imgSrc: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=300&h=300&fit=crop&q=80" },
 ];
 
 function getInitials(name: string) {

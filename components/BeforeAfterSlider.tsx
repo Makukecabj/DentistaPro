@@ -24,7 +24,7 @@ export default function BeforeAfterSlider() {
             <p className="font-mono text-xs tracking-[0.2em] text-gold uppercase mb-3">
               Resultados
             </p>
-            <h2 className="font-display text-3xl md:text-4xl font-medium mb-4">
+            <h2 className="heading-glow font-display text-3xl md:text-4xl font-medium mb-4">
               Antes y después
             </h2>
             <p className="text-ink/50 text-[15px] max-w-lg leading-relaxed">
@@ -47,13 +47,13 @@ export default function BeforeAfterSlider() {
             onTouchMove={(e) => updateFromClientX(e.touches[0].clientX)}
           >
             <img
-              src="https://placehold.co/800x450/17302B/E4ECE6?text=Despues"
-              alt="Después del tratamiento"
+              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=800&h=450&fit=crop&q=80"
+              alt="Después del tratamiento - sonrisa brillante y natural"
               className="absolute inset-0 w-full h-full object-cover"
             />
 
             <img
-              src="https://placehold.co/800x450/6B7570/F6F4EF?text=Antes"
+              src="https://images.unsplash.com/photo-1629909615184-74f495363b67?w=800&h=450&fit=crop&q=80"
               alt="Antes del tratamiento"
               className="absolute inset-y-0 left-0 object-cover"
               style={{ width: `${position}%` }}
