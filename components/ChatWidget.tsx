@@ -9,7 +9,7 @@ type Message = {
 
 const INITIAL_MESSAGE: Message = {
   role: "bot",
-  text: "¡Hola! Soy el asistente virtual de Estudio Dental Aguirre. ¿En qué puedo ayudarte? Podés consultarme por turnos, servicios, o cualquier otra cosa.",
+  text: "Hola, ¿querés sacar turno? Elegí el día y te confirmo al toque.",
 };
 
 export default function ChatWidget() {

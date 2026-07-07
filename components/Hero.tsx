@@ -3,39 +3,32 @@ import ChatWidget from "./ChatWidget";
 
 export default function Hero() {
   return (
-    <section className="max-w-6xl mx-auto px-6 pt-16 pb-20 grid md:grid-cols-2 gap-12 items-center">
+    <section className="max-w-6xl mx-auto px-6 pt-20 pb-24 grid md:grid-cols-2 gap-16 items-center">
       <div>
-        <Image
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&h=400&fit=crop&q=80"
-          alt="Consultorio dental moderno en Belgrano, CABA"
-          width={600}
-          height={400}
-          priority
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="rounded-xl2 w-full h-auto object-cover mb-8"
-        />
-        <p className="font-mono text-xs tracking-wide text-gold-dark uppercase mb-4">
-          Atención dental en Belgrano, CABA
+        <p className="font-mono text-xs tracking-widest text-gold uppercase mb-5">
+          Belgrano, CABA
         </p>
-        <h1 className="font-display text-4xl md:text-5xl font-medium leading-tight mb-6">
-          Tu próximo turno, en menos de un minuto.
+        <h1 className="font-display text-4xl md:text-[2.75rem] font-medium leading-[1.15] mb-6">
+          Sacá turno sin
+          <br />
+          <span className="text-teal-dark">llamar por teléfono.</span>
         </h1>
-        <p className="text-ink/70 text-lg mb-8 max-w-md">
-          Reservá tu hora las 24 horas, sin llamar ni esperar a que atiendan
-          el teléfono. El consultorio confirma automáticamente.
+        <p className="text-ink/60 text-lg mb-10 max-w-md leading-relaxed">
+          Elegí el día, elegí la hora, y listo. El consultorio te confirma al toque.
+          Sin colas, sin esperas, sin vueltas.
         </p>
         <div className="flex flex-wrap gap-3">
           <a
             href="#turno"
-            className="rounded-full bg-teal-dark text-paper px-6 py-3 text-sm font-medium hover:bg-ink transition-colors"
+            className="rounded-full bg-ink text-paper px-7 py-3.5 text-sm font-medium hover:bg-teal-dark transition-colors"
           >
-            Reservar turno ahora
+            Reservar turno
           </a>
           <a
             href="https://wa.me/5491145678900"
-            className="rounded-full border border-ink/20 px-6 py-3 text-sm font-medium hover:border-ink/40 transition-colors"
+            className="rounded-full border border-ink/20 px-7 py-3.5 text-sm font-medium hover:border-ink/40 hover:bg-ink/5 transition-all"
           >
-            Escribir por WhatsApp
+            WhatsApp
           </a>
         </div>
       </div>

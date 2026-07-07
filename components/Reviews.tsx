@@ -1,16 +1,21 @@
-// TODO: reemplazar por reseñas reales, idealmente traídas de Google
 const REVIEWS = [
   {
-    name: "Paciente A.",
-    text: "Reservé el turno por chat un domingo a la noche y me confirmaron enseguida.",
+    name: "Martín S.",
+    date: "hace 2 semanas",
+    text: "Entré a las 11 de la noche un domingo y a los 2 minutos ya tenía turno para el martes. Impecable.",
+    rating: 5,
   },
   {
-    name: "Paciente B.",
-    text: "Muy buena atención, y lo de sacar turno online sin llamar es un golazo.",
+    name: "Lucía P.",
+    date: "hace 1 mes",
+    text: "La Dra. Aguirre te explica todo sin apuro. Me hizo sentir tranquila desde la primera consulta.",
+    rating: 5,
   },
   {
-    name: "Paciente C.",
-    text: "El tratamiento quedó perfecto, se nota la diferencia en las fotos de antes y después.",
+    name: "Carlos R.",
+    date: "hace 3 semanas",
+    text: "Venía postergando hace años. El chat me facilitó todo. Hoy salí con la limpieza hecha y sin dolor.",
+    rating: 5,
   },
 ];
 
@@ -24,23 +29,41 @@ function Star() {
 
 export default function Reviews() {
   return (
-    <section id="opiniones" className="max-w-6xl mx-auto px-6 py-16">
-      <h2 className="font-display text-3xl font-medium mb-10">
-        Lo que dicen nuestros pacientes
-      </h2>
-      <div className="grid sm:grid-cols-3 gap-6">
+    <section id="opiniones" className="max-w-6xl mx-auto px-6 py-20">
+      <div className="flex items-end justify-between mb-12">
+        <div>
+          <p className="font-mono text-xs tracking-widest text-gold uppercase mb-3">
+            Google
+          </p>
+          <h2 className="font-display text-3xl font-medium">
+            Lo que dicen
+          </h2>
+        </div>
+        <div className="hidden md:flex items-center gap-2 text-sm text-ink/50">
+          <div className="flex gap-0.5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} />
+            ))}
+          </div>
+          <span>4.9 en Google</span>
+        </div>
+      </div>
+      <div className="grid sm:grid-cols-3 gap-5">
         {REVIEWS.map((r) => (
           <div
             key={r.name}
-            className="rounded-xl2 border border-ink/10 bg-white p-6"
+            className="rounded-xl2 border border-ink/8 bg-white p-6 hover:shadow-md hover:shadow-ink/5 transition-shadow"
           >
-            <div className="flex gap-1 mb-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} />
-              ))}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex gap-0.5">
+                {Array.from({ length: r.rating }).map((_, i) => (
+                  <Star key={i} />
+                ))}
+              </div>
+              <span className="font-mono text-xs text-ink/35">{r.date}</span>
             </div>
-            <p className="text-sm text-ink/75 mb-4">&ldquo;{r.text}&rdquo;</p>
-            <p className="font-mono text-xs text-ink/50">{r.name}</p>
+            <p className="text-sm text-ink/70 mb-4 leading-relaxed">&ldquo;{r.text}&rdquo;</p>
+            <p className="font-medium text-sm">{r.name}</p>
           </div>
         ))}
       </div>

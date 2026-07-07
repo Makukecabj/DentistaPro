@@ -1,6 +1,5 @@
 const NAV_ITEMS = [
   { href: "#servicios", label: "Servicios" },
-  { href: "#antes-despues", label: "Antes y después" },
   { href: "#equipo", label: "Equipo" },
   { href: "#opiniones", label: "Opiniones" },
   { href: "#contacto", label: "Contacto" },
@@ -8,13 +7,13 @@ const NAV_ITEMS = [
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur border-b border-ink/10">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" className="font-display text-xl font-medium">
+    <header className="sticky top-0 z-40 bg-paper/80 backdrop-blur-md border-b border-ink/5">
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+        <a href="#" className="font-display text-lg font-medium tracking-tight">
           Estudio Dental Aguirre
         </a>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm text-ink/80">
+        <nav className="hidden md:flex items-center gap-7 text-[13px] text-ink/60">
           {NAV_ITEMS.map((item) => (
             <a
               key={item.href}
@@ -28,7 +27,7 @@ export default function Header() {
 
         <a
           href="#turno"
-          className="rounded-full bg-teal-dark text-paper text-sm font-medium px-5 py-2 hover:bg-ink transition-colors"
+          className="rounded-full bg-ink text-paper text-[13px] font-medium px-4 py-2 hover:bg-teal-dark transition-colors"
         >
           Reservar turno
         </a>

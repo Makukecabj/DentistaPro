@@ -43,74 +43,90 @@ export default function Contact() {
   }
 
   return (
-    <section id="contacto" className="max-w-6xl mx-auto px-6 py-16">
-      <h2 className="font-display text-3xl font-medium mb-10">Contacto</h2>
+    <section id="contacto" className="max-w-6xl mx-auto px-6 py-20">
+      <div className="flex items-end justify-between mb-12">
+        <div>
+          <p className="font-mono text-xs tracking-widest text-gold uppercase mb-3">
+            Consultorio
+          </p>
+          <h2 className="font-display text-3xl font-medium">
+            Vení a visitarnos
+          </h2>
+        </div>
+      </div>
       <div className="grid md:grid-cols-2 gap-10">
-        <div className="space-y-3 text-ink/75">
-          <p>
-            <span className="font-medium text-ink">Dirección:</span> Av. Cabildo
-            2450, Belgrano, CABA
-          </p>
-          <p>
-            <span className="font-medium text-ink">Teléfono:</span> +54 11
-            4780-2233
-          </p>
-          <p>
-            <span className="font-medium text-ink">Horario:</span> Lunes a
-            viernes 9 a 19 hs, sábados 9 a 13 hs
-          </p>
+        <div className="space-y-4">
+          <div className="space-y-3 text-ink/65 text-[15px]">
+            <p>
+              <span className="font-medium text-ink">Dirección</span>
+              <br />
+              Av. Cabildo 2450, Belgrano, CABA
+            </p>
+            <p>
+              <span className="font-medium text-ink">Teléfono</span>
+              <br />
+              +54 11 4780-2233
+            </p>
+            <p>
+              <span className="font-medium text-ink">Horarios</span>
+              <br />
+              Lunes a viernes 9 a 19 hs
+              <br />
+              Sábados 9 a 13 hs
+            </p>
+          </div>
           <div className="mt-4">
             {imgError ? (
-              <div className="rounded-xl2 border border-ink/10 bg-sage h-48 flex items-center justify-center text-ink/40 text-sm font-mono">
-                mapa de ubicación
+              <div className="rounded-xl2 border border-ink/8 bg-sage/50 h-44 flex items-center justify-center text-ink/30 text-sm font-mono">
+                Av. Cabildo 2450
               </div>
             ) : (
               <Image
                 src="https://images.unsplash.com/photo-1629909615184-74f495363b67?w=600&h=192&fit=crop&q=80"
                 alt="Fachada del consultorio Estudio Dental Aguirre en Av. Cabildo, Belgrano"
                 width={600}
-                height={192}
-                className="rounded-xl2 w-full h-48 object-cover"
+                height={176}
+                className="rounded-xl2 w-full h-44 object-cover"
                 onError={() => setImgError(true)}
               />
             )}
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <input
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
-            className="w-full rounded-full border border-ink/15 px-4 py-3 text-sm outline-none focus:border-gold"
-            placeholder="Tu nombre"
+            className="w-full rounded-full border border-ink/10 px-4 py-3 text-sm outline-none focus:border-gold transition-colors"
+            placeholder="Nombre"
             required
           />
           <input
             value={telefono}
             onChange={(e) => setTelefono(e.target.value)}
-            className="w-full rounded-full border border-ink/15 px-4 py-3 text-sm outline-none focus:border-gold"
-            placeholder="Tu teléfono"
+            className="w-full rounded-full border border-ink/10 px-4 py-3 text-sm outline-none focus:border-gold transition-colors"
+            placeholder="Teléfono"
             required
           />
           <textarea
             value={mensaje}
             onChange={(e) => setMensaje(e.target.value)}
-            className="w-full rounded-xl2 border border-ink/15 px-4 py-3 text-sm outline-none focus:border-gold min-h-[120px]"
-            placeholder="Contanos qué necesitás"
+            className="w-full rounded-xl2 border border-ink/10 px-4 py-3 text-sm outline-none focus:border-gold transition-colors min-h-[110px] resize-none"
+            placeholder="¿Qué necesitás?"
             required
           />
           {error && (
             <p className="text-sm text-red-500">{error}</p>
           )}
           {enviado ? (
-            <p className="text-sm text-teal-dark font-medium">
-              ¡Mensaje enviado con éxito! Te vamos a contactar pronto.
+            <p className="text-sm text-teal-dark font-medium py-2">
+              ¡Listo! Te contactamos a la brevedad.
             </p>
           ) : (
             <button
               type="submit"
               disabled={enviando}
-              className="rounded-full bg-teal-dark text-paper px-6 py-3 text-sm font-medium hover:bg-ink transition-colors disabled:opacity-50"
+              className="rounded-full bg-ink text-paper px-6 py-3 text-sm font-medium hover:bg-teal-dark transition-colors disabled:opacity-50"
             >
               {enviando ? "Enviando…" : "Enviar mensaje"}
             </button>
