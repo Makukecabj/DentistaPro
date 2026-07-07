@@ -22,9 +22,9 @@ export default function Hero() {
           >
             Reservar turno ahora
           </a>
-          {/* TODO: actualizar el número de WhatsApp */}
+          {/* WhatsApp */}
           <a
-            href="https://wa.me/5490000000000"
+            href="https://wa.me/5491145678900"
             className="rounded-full border border-ink/20 px-6 py-3 text-sm font-medium hover:border-ink/40 transition-colors"
           >
             Escribir por WhatsApp

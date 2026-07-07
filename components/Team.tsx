@@ -1,8 +1,7 @@
-// TODO: reemplazar por los profesionales reales del consultorio
 const TEAM = [
-  { name: "Dra. Ejemplo Apellido", role: "Odontóloga general", img: "https://placehold.co/400x400/2F6B5E/ffffff?text=Dra" },
-  { name: "Dr. Ejemplo Apellido", role: "Ortodoncista", img: "https://placehold.co/400x400/2F6B5E/ffffff?text=Dr" },
-  { name: "Dra. Ejemplo Apellido", role: "Especialista en implantes", img: "https://placehold.co/400x400/2F6B5E/ffffff?text=Dra" },
+  { name: "Dra. Valentina Aguirre", role: "Odontóloga general · Directora", img: "https://placehold.co/400x400/2F6B5E/ffffff?text=Dra" },
+  { name: "Dr. Martín Ferreyra", role: "Ortodoncista", img: "https://placehold.co/400x400/2F6B5E/ffffff?text=Dr" },
+  { name: "Dra. Camila Sosa", role: "Especialista en implantes", img: "https://placehold.co/400x400/2F6B5E/ffffff?text=Dra" },
 ];
 
 export default function Team() {

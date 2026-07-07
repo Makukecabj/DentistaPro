@@ -10,9 +10,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur border-b border-ink/10">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* TODO: reemplazar por el nombre real del consultorio */}
         <a href="#" className="font-display text-xl font-medium">
-          Sonríe Dental
+          Estudio Dental Aguirre
         </a>
 
         <nav className="hidden md:flex items-center gap-8 text-sm text-ink/80">

@@ -20,11 +20,10 @@ const plexMono = IBM_Plex_Mono({
   variable: "--font-mono",
 });
 
-// TODO: actualizar título, descripción y datos del consultorio
 export const metadata: Metadata = {
-  title: "Sonríe Dental — Turnos online",
+  title: "Estudio Dental Aguirre — Turnos online",
   description:
-    "Consultorio odontológico con reserva de turnos automática las 24 horas.",
+    "Consultorio odontológico en Belgrano. Reservá tu turno online las 24 horas.",
 };
 
 export default function RootLayout({

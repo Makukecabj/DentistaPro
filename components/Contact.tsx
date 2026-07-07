@@ -45,18 +45,17 @@ export default function Contact() {
       <h2 className="font-display text-3xl font-medium mb-10">Contacto</h2>
       <div className="grid md:grid-cols-2 gap-10">
         <div className="space-y-3 text-ink/75">
-          {/* TODO: reemplazar por los datos reales */}
           <p>
-            <span className="font-medium text-ink">Dirección:</span> Calle
-            Ejemplo 123, Tu Ciudad
+            <span className="font-medium text-ink">Dirección:</span> Av. Cabildo
+            2450, Belgrano, CABA
           </p>
           <p>
-            <span className="font-medium text-ink">Teléfono:</span> +54 9 00
-            0000-0000
+            <span className="font-medium text-ink">Teléfono:</span> +54 11
+            4780-2233
           </p>
           <p>
             <span className="font-medium text-ink">Horario:</span> Lunes a
-            viernes, 9 a 19 hs
+            viernes 9 a 19 hs, sábados 9 a 13 hs
           </p>
           <div className="rounded-xl2 border border-ink/10 bg-sage h-48 flex items-center justify-center text-ink/40 text-sm font-mono mt-4">
             mapa de ubicación

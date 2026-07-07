@@ -1,4 +1,4 @@
-# Sonríe Dental — esqueleto web pro
+# Estudio Dental Aguirre — Web pro
 
 Proyecto Next.js 14 (App Router) + TypeScript + Tailwind, pensado como base
 para el paquete "pro" (web + chatbot de turnos). El diseño y la estructura
