@@ -22,7 +22,7 @@ export default function SectionCTA({
       className={`text-center ${className}`}
     >
       <a
-        href="https://wa.me/5491147802233?text=Hola!%20Quiero%20m%C3%A1s%20informaci%C3%B3n"
+        href="https://wa.me/5491164106698?text=Hola!%20Quiero%20m%C3%A1s%20informaci%C3%B3n"
         target="_blank"
         rel="noopener noreferrer"
         className="group inline-flex items-center gap-2.5 rounded-full bg-gold px-8 py-4 text-sm font-medium text-ink transition-all duration-300 hover:bg-gold-dark hover:text-paper hover:shadow-glow-lg hover:scale-[1.03] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"

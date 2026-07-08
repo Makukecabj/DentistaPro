@@ -97,7 +97,7 @@ export default function Team() {
   const displayTeam = team;
 
   return (
-    <section id="sobre-mi" className="py-20 md:py-28 scroll-mt-24">
+    <section id="equipo" className="py-20 md:py-28 scroll-mt-24">
       <div className="max-w-6xl mx-auto px-5 sm:px-6">
         <SectionReveal>
           <SectionHeading

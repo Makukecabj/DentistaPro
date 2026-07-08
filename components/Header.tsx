@@ -100,7 +100,7 @@ export default function Header() {
 
         <div className="flex items-center gap-2.5">
           <a
-            href="https://wa.me/5491147802233?text=Hola!%20Quiero%20un%20turno"
+            href="https://wa.me/5491164106698?text=Hola!%20Quiero%20un%20turno"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden md:inline-flex items-center gap-1.5 text-[13px] text-ink/50 hover:text-gold transition-colors"
@@ -181,7 +181,7 @@ export default function Header() {
                 Reservar turno
               </motion.a>
               <motion.a
-                href="https://wa.me/5491147802233?text=Hola!%20Quiero%20un%20turno"
+                href="https://wa.me/5491164106698?text=Hola!%20Quiero%20un%20turno"
                 target="_blank"
                 rel="noopener noreferrer"
                 initial={{ opacity: 0, x: -10 }}
@@ -195,7 +195,7 @@ export default function Header() {
                 WhatsApp
               </motion.a>
               <motion.a
-                href="tel:+541147802233"
+                href="tel:+541164106698"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: (NAV_ITEMS.length + 2) * 0.05 }}

@@ -151,7 +151,7 @@ export default function Hero() {
               </span>
             </a>
             <a
-              href="https://wa.me/5491147802233?text=Hola!%20Quiero%20agendar%20un%20turno"
+              href="https://wa.me/5491164106698?text=Hola!%20Quiero%20agendar%20un%20turno"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full border border-paper/25 text-paper px-8 py-4 sm:py-5 text-[15px] font-medium hover:border-paper/50 hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto text-center"

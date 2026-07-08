@@ -5,9 +5,9 @@ import Hero from "@/components/Hero";
 import TrustSection from "@/components/TrustSection";
 import Statistics from "@/components/Statistics";
 import WhyChooseUs from "@/components/WhyChooseUs";
+import About from "@/components/About";
 import Services from "@/components/Services";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
-import Team from "@/components/Team";
 import SocialProof from "@/components/SocialProof";
 import BudgetCalculator from "@/components/BudgetCalculator";
 import FAQ from "@/components/FAQ";
@@ -33,7 +33,7 @@ interface BlogPostPreview {
 const MOCK_POSTS: BlogPostPreview[] = [
   {
     slug: "visitas-regulares-dentista",
-    title: "La Importancia de las Visitas Regulares al Dr. John",
+    title: "La Importancia de las Visitas Regulares al Dentista",
     date: "15 Ene 2023",
     excerpt: "Descubrí por qué las revisiones periódicas son clave para una salud bucal óptima y una sonrisa radiante.",
   },
@@ -72,10 +72,10 @@ export default function Home() {
       <TrustSection />
       <Statistics />
       <WhyChooseUs />
+      <About />
       <Services />
       <SectionCTA text="Consultá tu tratamiento por WhatsApp" />
       <BeforeAfterSlider />
-      <Team />
       <SectionCTA text="Agendá tu consulta" />
       <SocialProof />
       <BudgetCalculator />

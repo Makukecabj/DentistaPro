@@ -200,7 +200,7 @@ export default function BudgetCalculator() {
                     Te enviamos una estimación personalizada por WhatsApp con todos los detalles de tu caso.
                   </p>
                   <a
-                    href={`https://wa.me/5491147802233?text=${getWhatsAppMessage()}`}
+                    href={`https://wa.me/5491164106698?text=${getWhatsAppMessage()}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-4 text-sm font-semibold text-ink transition-all duration-300 hover:bg-gold-dark hover:text-paper hover:shadow-glow-lg hover:scale-[1.03] active:scale-[0.97]"

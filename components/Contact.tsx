@@ -91,8 +91,8 @@ export default function Contact() {
                   </svg>
                   <div>
                     <p className="font-medium text-ink">Teléfono</p>
-                    <a href="tel:+541147802233" className="text-ink/55 hover:text-gold transition-colors">
-                      +54 11 4780-2233
+                    <a href="tel:+541164106698" className="text-ink/55 hover:text-gold transition-colors">
+                      +54 11 6410-6698
                     </a>
                   </div>
                 </div>
@@ -247,7 +247,7 @@ export default function Contact() {
               </form>
 
               <a
-                href="https://wa.me/5491147802233?text=Hola!%20Quiero%20m%C3%A1s%20informaci%C3%B3n"
+                href="https://wa.me/5491164106698?text=Hola!%20Quiero%20m%C3%A1s%20informaci%C3%B3n"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-2xl border border-ink/10 bg-white/30 py-3.5 text-sm text-ink/60 hover:text-gold hover:bg-gold/5 transition-all"

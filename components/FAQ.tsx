@@ -61,7 +61,7 @@ function FAQItem({ q, a, index }: { q: string; a: string; index: number }) {
 
 export default function FAQ() {
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
-  const [clinicPhone, setClinicPhone] = useState("5491147802233");
+  const [clinicPhone, setClinicPhone] = useState("5491164106698");
 
   useEffect(() => {
     async function fetchData() {

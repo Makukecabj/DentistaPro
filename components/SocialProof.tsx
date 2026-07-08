@@ -149,7 +149,7 @@ export default function SocialProof() {
             </a>
             <span className="hidden sm:inline text-ink/20">|</span>
             <a
-              href="https://wa.me/5491147802233?text=Hola!%20Quiero%20dejar%20mi%20opini%C3%B3n"
+              href="https://wa.me/5491164106698?text=Hola!%20Quiero%20dejar%20mi%20opini%C3%B3n"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-ink/50 hover:text-gold transition-colors"

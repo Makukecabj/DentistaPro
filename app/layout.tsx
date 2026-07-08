@@ -23,9 +23,10 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dentista-pro-bice.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dentista-pro-mauve.vercel.app";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Estudio Dental Aguirre — Odontólogo en Belgrano, CABA",
     template: "%s | Estudio Dental Aguirre",
@@ -57,21 +58,12 @@ export const metadata: Metadata = {
     title: "Estudio Dental Aguirre — Odontólogo en Belgrano, CABA",
     description:
       "Consultorio odontológico premium en Belgrano, CABA. Especialistas certificados con tecnología de última generación. Turnos online 24hs.",
-    images: [
-      {
-        url: `${siteUrl}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: "Estudio Dental Aguirre — Consultorio odontológico en Belgrano",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Estudio Dental Aguirre — Odontólogo en Belgrano, CABA",
     description:
       "Consultorio odontológico premium en Belgrano, CABA. Especialistas certificados. Turnos online 24hs.",
-    images: [`${siteUrl}/og-image.png`],
   },
   robots: {
     index: true,
@@ -91,9 +83,9 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Dentist",
     name: "Estudio Dental Aguirre",
-    image: `${siteUrl}/og-image.png`,
+    image: `${siteUrl}/opengraph-image`,
     url: siteUrl,
-    telephone: "+541147802233",
+    telephone: "+541164106698",
     email: "hola@estudiodentalaguirre.com",
     address: {
       "@type": "PostalAddress",

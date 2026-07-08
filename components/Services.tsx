@@ -72,7 +72,7 @@ const item = {
 
 export default function Services() {
   const [services, setServices] = useState<Service[]>([]);
-  const [clinicPhone, setClinicPhone] = useState("5491147802233");
+  const [clinicPhone, setClinicPhone] = useState("5491164106698");
 
   useEffect(() => {
     async function fetchData() {

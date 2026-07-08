@@ -81,8 +81,8 @@
               <li>Av. Cabildo 2450</li>
               <li>Belgrano, CABA</li>
               <li>
-                <a href="tel:+541147802233" className="link-underline hover:text-paper transition-colors">
-                  +54 11 4780-2233
+                <a href="tel:+541164106698" className="link-underline hover:text-paper transition-colors">
+                  +54 11 6410-6698
                 </a>
               </li>
               <li>
@@ -106,7 +106,7 @@
                 </svg>
               </a>
               <a
-                href="https://wa.me/5491147802233?text=Hola!%20Quiero%20informaci%C3%B3n"
+                href="https://wa.me/5491164106698?text=Hola!%20Quiero%20informaci%C3%B3n"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-paper/40 hover:text-gold transition-colors"
@@ -122,7 +122,7 @@
 
         <div className="border-t border-paper/10 pt-8 mb-8">
           <a
-            href="https://wa.me/5491147802233?text=Hola!%20Quiero%20reservar%20un%20turno"
+            href="https://wa.me/5491164106698?text=Hola!%20Quiero%20reservar%20un%20turno"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-3 rounded-full bg-gold px-8 py-4 text-sm font-semibold text-ink transition-all duration-300 hover:bg-gold-dark hover:text-paper hover:shadow-glow-lg hover:scale-[1.02] active:scale-[0.98]"
