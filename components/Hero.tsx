@@ -53,8 +53,8 @@ export default function Hero() {
             sizes="100vw"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/85 to-ink/65" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/92 via-ink/75 to-ink/55" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-ink/20" />
       </div>
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -117,7 +117,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-display text-[2.5rem] md:text-[4rem] font-medium leading-[1.05] mb-6 tracking-tight text-paper"
-            style={{ textShadow: "0 2px 40px rgba(0,0,0,0.6), 0 4px 60px rgba(0,0,0,0.3)" }}
+            style={{ textShadow: "0 2px 30px rgba(0,0,0,0.3)" }}
           >
             Tu sonrisa merece
             <br />
