@@ -45,7 +45,7 @@ export default function Hero() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="relative w-full h-full">
           <Image
-            src="/images/hero/salaespera.png"
+            src="/images/hero/sala.png"
             alt="Sala de espera del Dr. Martín Aguirre en Belgrano"
             fill
             priority
