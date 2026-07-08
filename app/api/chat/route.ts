@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getServiceSupabase } from "@/lib/supabaseClient";
 import { getClinic, Clinic, DAYS_ES } from "@/lib/clinicService";
+import { getOccupiedSlots, createCalendarEvent, isCalendarConfigured } from "@/lib/googleCalendar";
 
 // ---------- Config ----------
 
@@ -37,6 +38,10 @@ function getHorariosParaFecha(fecha: string, clinic: Clinic | null, ahora?: Date
 }
 
 async function consultarHorarios(fecha: string, clinic: Clinic | null, ahora?: Date): Promise<string[]> {
+  const allSlots = getHorariosParaFecha(fecha, clinic, ahora);
+  const ocupados = new Set<string>();
+
+  // Check Supabase
   try {
     const supabase = getServiceSupabase();
     const { data: turnos } = await supabase
@@ -44,11 +49,22 @@ async function consultarHorarios(fecha: string, clinic: Clinic | null, ahora?: D
       .select("hora")
       .eq("fecha", fecha)
       .neq("estado", "cancelado");
-    const ocupados = new Set((turnos ?? []).map((t) => String(t.hora).slice(0, 5)));
-    return getHorariosParaFecha(fecha, clinic, ahora).filter((h) => !ocupados.has(h));
-  } catch {
-    return getHorariosParaFecha(fecha, clinic, ahora);
+    for (const t of (turnos ?? [])) {
+      ocupados.add(String(t.hora).slice(0, 5));
+    }
+  } catch { /* ignore */ }
+
+  // Check Google Calendar
+  if (isCalendarConfigured()) {
+    try {
+      const calendarOccupied = await getOccupiedSlots(fecha);
+      for (const slot of calendarOccupied) {
+        ocupados.add(slot);
+      }
+    } catch { /* ignore */ }
   }
+
+  return allSlots.filter((h) => !ocupados.has(h));
 }
 
 async function guardarTurno(params: {
@@ -357,6 +373,16 @@ export async function POST(req: NextRequest) {
         fecha: state.fecha,
         hora: state.hora,
       });
+
+      // Also create Google Calendar event (non-blocking)
+      if (isCalendarConfigured()) {
+        createCalendarEvent({
+          nombre: state.nombre,
+          telefono: state.telefono,
+          fecha: state.fecha,
+          hora: state.hora,
+        }).catch(() => {});
+      }
 
       return NextResponse.json({
         reply: await generateResponse(
