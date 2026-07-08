@@ -37,7 +37,7 @@ export default function About() {
           <motion.div variants={item} className="md:col-span-2">
             <div className="relative w-full aspect-[3/4] max-w-sm mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-elevated">
               <Image
-                src="/images/about/dr-aguirre.jpg"
+                src="/images/team/draguirre.png"
                 alt="Dr. Martín Aguirre — Odontólogo en Belgrano"
                 fill
                 className="object-cover"
