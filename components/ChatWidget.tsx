@@ -101,10 +101,21 @@ export default function ChatWidget() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute bottom-full left-4 mb-3 max-w-[75vw] text-left bg-ink text-paper text-xs font-medium px-3 py-2 rounded-xl shadow-elevated"
+                  className="absolute bottom-full right-4 mb-3 max-w-[calc(100vw-2rem)] text-left bg-ink text-paper text-xs font-medium px-3 py-2 rounded-xl shadow-elevated break-words"
                 >
-                  ¿Necesitás un turno?
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-ink" />
+                  <div className="flex items-start justify-between gap-3">
+                    <span>¿Necesitás un turno?</span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setShowTooltip(false); }}
+                      className="shrink-0 text-paper/70 hover:text-paper transition-colors"
+                      aria-label="Cerrar aviso"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M2 2l10 10M12 2L2 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="absolute top-full right-4 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-ink" />
                 </motion.div>
               )}
             </AnimatePresence>
