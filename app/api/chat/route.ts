@@ -19,16 +19,24 @@ function generarHorarios(inicio = HORA_INICIO_DEFAULT, fin = HORA_FIN_DEFAULT, d
   return horarios;
 }
 
-function getHorariosParaFecha(fecha: string, clinic: Clinic | null): string[] {
+function getHorariosParaFecha(fecha: string, clinic: Clinic | null, ahora?: Date): string[] {
   if (!clinic?.business_hours) return generarHorarios();
   const diaSemana = new Date(fecha).getDay();
   const diaMapeado = diaSemana === 0 ? 7 : diaSemana;
   const horarioDelDia = clinic.business_hours[diaMapeado.toString()];
   if (!horarioDelDia) return [];
-  return generarHorarios(horarioDelDia[0], horarioDelDia[1]);
+  const horarios = generarHorarios(horarioDelDia[0], horarioDelDia[1]);
+  if (ahora && fecha === ahora.toISOString().slice(0, 10)) {
+    const minutosActuales = ahora.getHours() * 60 + ahora.getMinutes();
+    return horarios.filter((h) => {
+      const [hh, mm] = h.split(":").map(Number);
+      return hh * 60 + mm > minutosActuales;
+    });
+  }
+  return horarios;
 }
 
-async function consultarHorarios(fecha: string, clinic: Clinic | null): Promise<string[]> {
+async function consultarHorarios(fecha: string, clinic: Clinic | null, ahora?: Date): Promise<string[]> {
   try {
     const supabase = getServiceSupabase();
     const { data: turnos } = await supabase
@@ -37,9 +45,9 @@ async function consultarHorarios(fecha: string, clinic: Clinic | null): Promise<
       .eq("fecha", fecha)
       .neq("estado", "cancelado");
     const ocupados = new Set((turnos ?? []).map((t) => String(t.hora).slice(0, 5)));
-    return getHorariosParaFecha(fecha, clinic).filter((h) => !ocupados.has(h));
+    return getHorariosParaFecha(fecha, clinic, ahora).filter((h) => !ocupados.has(h));
   } catch {
-    return getHorariosParaFecha(fecha, clinic);
+    return getHorariosParaFecha(fecha, clinic, ahora);
   }
 }
 
@@ -84,8 +92,8 @@ function getAIClient(): OpenAI | null {
 
 // ---------- Entity Extraction via IA ----------
 
-function buildExtractionPrompt(history: string, today: string): string {
-  return `Hoy es ${today}.
+function buildExtractionPrompt(history: string, today: string, ahora: string): string {
+  return `Hoy es ${today}. Son las ${ahora}.
 
 Extraé del historial del paciente los datos para reservar un turno odontológico.
 Usá los valores más RECIENTES. Si el paciente corrige algo, tomá el último que dijo.
@@ -115,14 +123,16 @@ async function extractEntities(userMessages: string[], clinic: Clinic | null): P
   const history = userMessages.join("\n");
   if (!client) return extractEntitiesFallback(history);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const ahora = new Date();
+  const today = ahora.toISOString().slice(0, 10);
+  const ahoraStr = ahora.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false });
 
   try {
     const completion = await client.chat.completions.create({
       model: process.env.GROQ_API_KEY ? "llama-3.1-8b-instant" : "gpt-4o-mini",
       messages: [
         { role: "system", content: "Sos un extractor de datos. Respondé solo JSON válido." },
-        { role: "user", content: buildExtractionPrompt(history, today) },
+        { role: "user", content: buildExtractionPrompt(history, today, ahoraStr) },
       ],
       response_format: { type: "json_object" },
       temperature: 0,
@@ -151,6 +161,11 @@ function buildSystemPrompt(
   disponibles: string[],
   context: string,
 ): string {
+  const ahora = new Date();
+  const ahoraStr = ahora.toLocaleDateString("es-AR", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  });
   const nombre = clinic?.name || "Estudio Dental Aguirre";
   const telefono = clinic?.phone || "+54 11 6410-6698";
   const whatsapp = clinic?.whatsapp || "5491164106698";
@@ -164,34 +179,25 @@ function buildSystemPrompt(
         .join(", ")
     : "Lun a Vie";
 
-  return `Sos el asistente virtual del consultorio "${nombre}", en Belgrano, CABA.
+  return `Son las ${ahoraStr}. Sos ${nombre}, Belgrano, CABA.
 
-DATOS DEL CONSULTORIO:
-• Dirección: ${direccion}
-• Teléfono: ${telefono}
-• WhatsApp: ${whatsapp}
-• Horarios: ${diasAtencion}
+DATOS:
+• Tel: ${telefono} / WhatsApp: ${whatsapp}
+• ${diasAtencion}
 • Cancelación: ${cancelPolicy}
+• Dirección: ${direccion}
 
-Tu objetivo es ayudar a reservar un turno.
+VOS: español argentino, cálido, amistoso, sin vueltas. Respondé en 1-2 oraciones.
 
-PERSONALIDAD:
-• Español argentino, tono cálido y profesional
-• Frases cortas, claras, sin vueltas
-• Nunca digas "como asistente virtual" ni "como IA" — sos parte del equipo del Dr. Aguirre
-• Si preguntan algo fuera de tu alcance (diagnósticos, precios exactos), decí: "eso es mejor consultarlo directamente con el Dr. Aguirre"
+Si preguntan por diagnósticos o precios exactos: "mejor consultalo con el Dr. Aguirre".
 
-ESTADO ACTUAL DE LA RESERVA:
-• Fecha: ${state.fecha || "—"}
-• Hora: ${state.hora || "—"}
-• Paciente: ${state.nombre || "—"}
-• Teléfono: ${state.telefono || "—"}
+${state.fecha ? `RESERVA: ${state.fecha} ${state.hora || "—"} / ${state.nombre || "—"} / ${state.telefono || "—"}` : "No hay datos de reserva aún."}
 
-${disponibles.length > 0 ? `HORARIOS LIBRES para ${state.fecha}: ${disponibles.slice(0, 8).join(", ")}` : ""}
+${disponibles.length > 0 ? `LIBRES: ${disponibles.slice(0, 8).join(", ")}` : ""}
 
 CONTEXTO: ${context}
 
-IMPORTANTE: Si falta un dato, preguntalo de forma natural. Si están todos, confirmá el turno con fecha y hora.`;
+Si falta algo, preguntalo corto. Si está todo, confirmá.`;
 }
 
 async function generateResponse(
@@ -211,7 +217,7 @@ async function generateResponse(
         { role: "system", content: buildSystemPrompt(clinic, state, disponibles, context) },
       ],
       temperature: 0.7,
-      max_tokens: 250,
+      max_tokens: 180,
     });
     return completion.choices[0]?.message?.content?.trim() || fallback;
   } catch {
@@ -223,6 +229,7 @@ async function generateResponse(
 
 export async function POST(req: NextRequest) {
   const clinic = await getClinic();
+  const ahora = new Date();
 
   try {
     const { messages } = (await req.json()) as {
@@ -253,7 +260,7 @@ export async function POST(req: NextRequest) {
 
     let disponibles: string[] = [];
     if (state.fecha) {
-      disponibles = await consultarHorarios(state.fecha, clinic);
+      disponibles = await consultarHorarios(state.fecha, clinic, ahora);
     }
 
     // Singing / preguntas generales sin datos de turno aún
