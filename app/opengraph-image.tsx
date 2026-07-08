@@ -3,7 +3,19 @@ import { ImageResponse } from "next/og";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  const inter = fetch(
+    "https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap",
+  ).then((r) => r.text());
+
+  const cssText = await inter;
+  const fontUrl = cssText.match(/src: url\((.+?)\)/)?.[1];
+
+  let fontData: ArrayBuffer | null = null;
+  if (fontUrl) {
+    fontData = await fetch(fontUrl).then((r) => r.arrayBuffer());
+  }
+
   return new ImageResponse(
     (
       <div
@@ -34,7 +46,6 @@ export default function OpenGraphImage() {
         </div>
         <h1
           style={{
-            fontFamily: "Fraunces, serif",
             fontSize: 64,
             fontWeight: 600,
             color: "#F6F4EF",
@@ -48,8 +59,8 @@ export default function OpenGraphImage() {
         </h1>
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
             fontSize: 28,
+            fontWeight: 400,
             color: "#C9974A",
             textAlign: "center",
             margin: 0,
@@ -61,7 +72,11 @@ export default function OpenGraphImage() {
     ),
     {
       ...size,
-      fonts: [],
+      fonts: fontData
+        ? [
+            { name: "Inter", data: fontData, weight: 600, style: "normal" as const },
+          ]
+        : undefined,
     },
   );
 }
