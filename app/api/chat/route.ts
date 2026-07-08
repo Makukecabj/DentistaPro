@@ -3,39 +3,28 @@ import OpenAI from "openai";
 import { getServiceSupabase } from "@/lib/supabaseClient";
 import { getClinic, Clinic, DAYS_ES } from "@/lib/clinicService";
 
-// Horarios por defecto (usados solo si no hay datos de clínica)
+// ---------- Config ----------
+
 const HORA_INICIO_DEFAULT = parseInt(process.env.HORA_INICIO || "9");
 const HORA_FIN_DEFAULT = parseInt(process.env.HORA_FIN || "19");
 const DURACION_TURNOS_DEFAULT = parseInt(process.env.DURACION_TURNOS || "30");
 
-// Genera horarios según parámetros
 function generarHorarios(inicio = HORA_INICIO_DEFAULT, fin = HORA_FIN_DEFAULT, duracion = DURACION_TURNOS_DEFAULT): string[] {
   const horarios: string[] = [];
   for (let h = inicio; h < fin; h++) {
     for (let m = 0; m < 60; m += duracion) {
-      const hora = h.toString().padStart(2, "0");
-      const min = m.toString().padStart(2, "0");
-      horarios.push(`${hora}:${min}`);
+      horarios.push(`${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`);
     }
   }
   return horarios;
 }
 
-// Obtiene horarios según día de la semana, usando business_hours de la clínica
 function getHorariosParaFecha(fecha: string, clinic: Clinic | null): string[] {
-  if (!clinic?.business_hours) {
-    return generarHorarios();
-  }
-
-  const fechaObj = new Date(fecha);
-  const diaSemana = fechaObj.getDay(); // 0=Dom, 1=Lun, ... 6=Sáb
-
-  // Convertir a nuestro formato: 1=Lun ... 7=Dom
+  if (!clinic?.business_hours) return generarHorarios();
+  const diaSemana = new Date(fecha).getDay();
   const diaMapeado = diaSemana === 0 ? 7 : diaSemana;
-
   const horarioDelDia = clinic.business_hours[diaMapeado.toString()];
   if (!horarioDelDia) return [];
-
   return generarHorarios(horarioDelDia[0], horarioDelDia[1]);
 }
 
@@ -48,8 +37,7 @@ async function consultarHorarios(fecha: string, clinic: Clinic | null): Promise<
       .eq("fecha", fecha)
       .neq("estado", "cancelado");
     const ocupados = new Set((turnos ?? []).map((t) => String(t.hora).slice(0, 5)));
-    const horariosDisponibles = getHorariosParaFecha(fecha, clinic);
-    return horariosDisponibles.filter((h) => !ocupados.has(h));
+    return getHorariosParaFecha(fecha, clinic).filter((h) => !ocupados.has(h));
   } catch {
     return getHorariosParaFecha(fecha, clinic);
   }
@@ -72,32 +60,19 @@ async function guardarTurno(params: {
     estado: "pendiente",
   });
   if (error) throw new Error("No se pudo guardar el turno");
-  return { ok: true };
 }
 
-// ----- Parseo de un campo concreto desde un texto -----
-function parseFecha(texto: string): string | null {
-  return texto.match(/\d{4}-\d{2}-\d{2}/)?.[0] ?? null;
-}
-function parseHora(texto: string): string | null {
-  return texto.match(/\b([01]\d|2[0-3]):[0-5]\d\b/)?.[0] ?? null;
-}
-function parseTelefono(texto: string): string | null {
-  const m = texto.match(/(?:\+?\d[\d\s()-]{7,}\d)/)?.[0];
-  return m ? m.replace(/[\s()-]/g, "") : null;
-}
-function parseNombre(texto: string): string | null {
-  const limpio = texto.trim();
-  if (/\d{4}-\d{2}-\d{2}/.test(limpio)) return null;
-  if (/\b([01]\d|2[0-3]):[0-5]\d\b/.test(limpio)) return null;
-  if (/\d[\d\s()-]{7,}\d/.test(limpio) && limpio.replace(/\D/g, "").length >= 8) return null;
-  if (/(turno|reserv|agendar|sacar|pedir|hola|si|no|gracias|confirm|whatsapp|quiero|consulta|horario|dia|fecha|cuando)/i.test(limpio)) return null;
-  const palabras = limpio.split(/\s+/).filter(Boolean);
-  if (palabras.length >= 2 && limpio.length >= 4) return limpio;
-  return null;
-}
+// ---------- Booking State ----------
 
-// Cliente IA (opcional). Si no hay key, el flujo funciona igual con textos prefijados.
+type BookingState = {
+  fecha: string | null;
+  hora: string | null;
+  nombre: string | null;
+  telefono: string | null;
+};
+
+// ---------- AI Client ----------
+
 function getAIClient(): OpenAI | null {
   const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
@@ -107,49 +82,136 @@ function getAIClient(): OpenAI | null {
   });
 }
 
-// Construye system prompt dinámico desde los datos de la clínica
-function buildSystemPrompt(clinic: Clinic | null): string {
-  const nombre = clinic?.name || "Estudio Dental";
-  const telefono = clinic?.phone || "No especificado";
-  const whatsapp = clinic?.whatsapp || "No especificado";
-  const direccion = clinic?.address || "No especificada";
-  const cancelPolicy = clinic?.cancellation_policy || "24hs de anticipación";
-  const emergency = clinic?.business_hours?.hasOwnProperty("7") || clinic?.business_hours?.hasOwnProperty("1") || false;
+// ---------- Entity Extraction via IA ----------
 
-  // Parsear business_hours para mostrar
-  const diasAtencion = clinic?.business_hours
-    ? Object.entries(clinic.business_hours)
-      .filter(([_, value]) => value)
-      .map(([day]) => DAYS_ES[parseInt(day)])
-      .join(", ")
-    : "Lun-Vie";
+function buildExtractionPrompt(history: string, today: string): string {
+  return `Hoy es ${today}.
 
-  return `Sos el asistente virtual de ${nombre}, en Argentina. 
-    
-HORARIOS: Atención los días ${diasAtencion}.
-TELÉFONO: ${telefono}
-WHATSAPP: ${whatsapp}
-DIRECCIÓN: ${direccion}
-POLÍTICA DE CANCELACIÓN: ${cancelPolicy}
+Extraé del historial del paciente los datos para reservar un turno odontológico.
+Usá los valores más RECIENTES. Si el paciente corrige algo, tomá el último que dijo.
+Respondé SOLO un JSON con estos campos (null si no encontrás):
+- "fecha": en formato YYYY-MM-DD. Convertí fechas relativas (mañana, pasado mañana, el lunes, etc.) y meses en español (ej: "julio" → 07)
+- "hora": en formato HH:MM (24hs). Convertí "2 de la tarde" → "14:00", "las 10" → "10:00"
+- "nombre": nombre completo del paciente
+- "telefono": con código de país, solo dígitos, sin espacios ni guiones
 
-Responde en español argentino, corto, amable y natural. No des diagnósticos ni precios específicos.`;
+Historial del paciente:
+"""
+${history}
+"""`;
 }
 
-async function redactar(prompt: string, fallback: string, clinic: Clinic | null): Promise<string> {
+function extractEntitiesFallback(text: string): Partial<BookingState> {
+  return {
+    fecha: text.match(/\d{4}-\d{2}-\d{2}/)?.[0] ?? null,
+    hora: text.match(/\b([01]\d|2[0-3]):[0-5]\d\b/)?.[0] ?? null,
+    nombre: null,
+    telefono: text.match(/(?:\+?\d[\d\s()-]{7,}\d)/)?.[0]?.replace(/[\s()-]/g, "") ?? null,
+  };
+}
+
+async function extractEntities(userMessages: string[], clinic: Clinic | null): Promise<Partial<BookingState>> {
   const client = getAIClient();
-  if (!client) return fallback;
+  const history = userMessages.join("\n");
+  if (!client) return extractEntitiesFallback(history);
+
+  const today = new Date().toISOString().slice(0, 10);
+
   try {
     const completion = await client.chat.completions.create({
       model: process.env.GROQ_API_KEY ? "llama-3.1-8b-instant" : "gpt-4o-mini",
       messages: [
-        {
-          role: "system",
-          content: buildSystemPrompt(clinic),
-        },
-        { role: "user", content: prompt },
+        { role: "system", content: "Sos un extractor de datos. Respondé solo JSON válido." },
+        { role: "user", content: buildExtractionPrompt(history, today) },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0,
+      max_tokens: 200,
+    });
+
+    const raw = completion.choices[0]?.message?.content || "{}";
+    const parsed = JSON.parse(raw);
+
+    return {
+      fecha: typeof parsed.fecha === "string" ? parsed.fecha : null,
+      hora: typeof parsed.hora === "string" ? parsed.hora : null,
+      nombre: typeof parsed.nombre === "string" ? parsed.nombre : null,
+      telefono: typeof parsed.telefono === "string" ? parsed.telefono.replace(/\D/g, "") : null,
+    };
+  } catch {
+    return extractEntitiesFallback(history);
+  }
+}
+
+// ---------- Response Generation via IA ----------
+
+function buildSystemPrompt(
+  clinic: Clinic | null,
+  state: BookingState,
+  disponibles: string[],
+  context: string,
+): string {
+  const nombre = clinic?.name || "Estudio Dental Aguirre";
+  const telefono = clinic?.phone || "+54 11 6410-6698";
+  const whatsapp = clinic?.whatsapp || "5491164106698";
+  const direccion = clinic?.address || "Av. Cabildo 2450, Belgrano, CABA";
+  const cancelPolicy = clinic?.cancellation_policy || "24 hs de anticipación";
+
+  const diasAtencion = clinic?.business_hours
+    ? Object.entries(clinic.business_hours)
+        .filter(([_, v]) => v)
+        .map(([d]) => DAYS_ES[parseInt(d)])
+        .join(", ")
+    : "Lun a Vie";
+
+  return `Sos el asistente virtual del consultorio "${nombre}", en Belgrano, CABA.
+
+DATOS DEL CONSULTORIO:
+• Dirección: ${direccion}
+• Teléfono: ${telefono}
+• WhatsApp: ${whatsapp}
+• Horarios: ${diasAtencion}
+• Cancelación: ${cancelPolicy}
+
+Tu objetivo es ayudar a reservar un turno.
+
+PERSONALIDAD:
+• Español argentino, tono cálido y profesional
+• Frases cortas, claras, sin vueltas
+• Nunca digas "como asistente virtual" ni "como IA" — sos parte del equipo del Dr. Aguirre
+• Si preguntan algo fuera de tu alcance (diagnósticos, precios exactos), decí: "eso es mejor consultarlo directamente con el Dr. Aguirre"
+
+ESTADO ACTUAL DE LA RESERVA:
+• Fecha: ${state.fecha || "—"}
+• Hora: ${state.hora || "—"}
+• Paciente: ${state.nombre || "—"}
+• Teléfono: ${state.telefono || "—"}
+
+${disponibles.length > 0 ? `HORARIOS LIBRES para ${state.fecha}: ${disponibles.slice(0, 8).join(", ")}` : ""}
+
+CONTEXTO: ${context}
+
+IMPORTANTE: Si falta un dato, preguntalo de forma natural. Si están todos, confirmá el turno con fecha y hora.`;
+}
+
+async function generateResponse(
+  clinic: Clinic | null,
+  state: BookingState,
+  disponibles: string[],
+  context: string,
+  fallback: string,
+): Promise<string> {
+  const client = getAIClient();
+  if (!client) return fallback;
+
+  try {
+    const completion = await client.chat.completions.create({
+      model: process.env.GROQ_API_KEY ? "llama-3.1-8b-instant" : "gpt-4o-mini",
+      messages: [
+        { role: "system", content: buildSystemPrompt(clinic, state, disponibles, context) },
       ],
       temperature: 0.7,
-      max_tokens: 200,
+      max_tokens: 250,
     });
     return completion.choices[0]?.message?.content?.trim() || fallback;
   } catch {
@@ -157,11 +219,9 @@ async function redactar(prompt: string, fallback: string, clinic: Clinic | null)
   }
 }
 
-// ----- Flujo determinístico server-side -----
-type Campos = { fecha: string | null; hora: string | null; nombre: string | null; telefono: string | null };
+// ---------- POST ----------
 
 export async function POST(req: NextRequest) {
-  // Obtener datos de la clínica al inicio (contexto dinámico)
   const clinic = await getClinic();
 
   try {
@@ -169,136 +229,153 @@ export async function POST(req: NextRequest) {
       messages: { role: "user" | "assistant"; content: string }[];
     };
 
-    const userTexts = messages.filter((m) => m.role === "user").map((m) => m.content);
+    const userMessages = messages.filter((m) => m.role === "user").map((m) => m.content);
 
-    if (userTexts.length === 0) {
+    if (userMessages.length === 0) {
       return NextResponse.json({
-        reply: await redactar(
-          "Saludá y ofrecé ayuda para reservar un turno.",
-          `¡Hola! Soy el asistente del Dr. Martín Aguirre. ¿Necesitás un turno?`,
-          clinic
+        reply: await generateResponse(
+          clinic,
+          { fecha: null, hora: null, nombre: null, telefono: null },
+          [],
+          "Primer mensaje. Saludá y ofrecé ayuda para reservar un turno.",
+          "¡Hola! Soy el asistente del Dr. Martín Aguirre. ¿Necesitás un turno? Decime qué día te gustaría venir.",
         ),
       });
     }
 
-    const ultimo = userTexts[userTexts.length - 1] ?? "";
+    const extracted = await extractEntities(userMessages, clinic);
+    const state: BookingState = {
+      fecha: extracted.fecha || null,
+      hora: extracted.hora || null,
+      nombre: extracted.nombre || null,
+      telefono: extracted.telefono || null,
+    };
 
-    // Paso 1: saludo / intención -> pedir fecha
-    if (userTexts.length === 1) {
+    let disponibles: string[] = [];
+    if (state.fecha) {
+      disponibles = await consultarHorarios(state.fecha, clinic);
+    }
+
+    // Singing / preguntas generales sin datos de turno aún
+    const sinDatos = !state.fecha && !state.hora && !state.nombre && !state.telefono;
+    if (sinDatos && userMessages.length === 1) {
       return NextResponse.json({
-        reply: await redactar(
-          "Ofrecé ayuda para reservar un turno y pedí la fecha en formato AAAA-MM-DD.",
-          `¡Hola! Soy el asistente del Dr. Martín Aguirre. ¿Qué día te gustaría venir? Escribilo en formato año-mes-día, por ejemplo: 2026-07-10`,
-          clinic
+        reply: await generateResponse(
+          clinic,
+          state,
+          [],
+          "El paciente saludó pero no pidió turno explícitamente. Ofrecé ayuda amablemente y preguntá qué día le gustaría venir.",
+          "¡Hola! ¿En qué puedo ayudarte? Si querés reservar un turno, decime qué día te viene bien.",
         ),
       });
     }
 
-    const fecha = parseFecha(ultimo) ?? parseFecha(userTexts.join(" | "));
-    if (!fecha) {
+    if (!state.fecha) {
       return NextResponse.json({
-        reply: await redactar(
-          "No se entendió la fecha. Pedila en formato AAAA-MM-DD.",
-          "¿Me decís la fecha en formato año-mes-día? Por ejemplo: 2026-07-10",
-          clinic
+        reply: await generateResponse(
+          clinic,
+          state,
+          [],
+          "No se encontró una fecha. Preguntá qué día le gustaría venir.",
+          "¿Qué día te gustaría venir? Decime una fecha, por ejemplo: 2026-07-15",
         ),
       });
     }
 
-    // Paso 2: ya tenemos fecha -> mostrar disponibilidad y pedir hora
-    const horaDelMensaje = parseHora(ultimo);
-    if (userTexts.length === 2 || !horaDelMensaje) {
-      const disponibles = await consultarHorarios(fecha, clinic);
-      if (disponibles.length === 0) {
-        return NextResponse.json({
-          reply: await redactar(
-            `No hay horarios para ${fecha}. Sugerí otro día.`,
-            `No quedan horarios disponibles para ${fecha}. ¿Podés elegir otro día?`,
-            clinic
-          ),
-        });
-      }
-      const muestra = disponibles.slice(0, 6).join(", ");
+    if (disponibles.length === 0) {
       return NextResponse.json({
-        reply: await redactar(
-          `Mostrá estos horarios disponibles para ${fecha}: ${muestra}. Preguntá cuál prefiere.`,
-          `Para ${fecha} tengo estos horarios: ${muestra}. ¿Cuál preferís?`,
-          clinic
+        reply: await generateResponse(
+          clinic,
+          state,
+          [],
+          `No hay turnos para ${state.fecha} (cierra o sin disponibilidad). Sugerí otro día amablemente.`,
+          `No tengo turnos disponibles para ${state.fecha}. ¿Podés otro día?`,
         ),
       });
     }
 
-    const hora = horaDelMensaje!;
-
-    // Paso 3: pedir nombre
-    if (userTexts.length === 3) {
+    if (!state.hora) {
       return NextResponse.json({
-        reply: await redactar("Pedí el nombre completo del paciente.", "Perfecto. ¿Me decís tu nombre completo?", clinic),
-      });
-    }
-
-    const nombre = parseNombre(ultimo) ?? parseNombre(userTexts.join(" | "));
-    if (!nombre) {
-      return NextResponse.json({
-        reply: await redactar("No se entendió el nombre. Pedí el nombre completo.", "¿Me decís tu nombre completo, por favor?", clinic),
-      });
-    }
-
-    // Paso 4: pedir teléfono
-    if (userTexts.length === 4) {
-      return NextResponse.json({
-        reply: await redactar(
-          "Pedí el teléfono con código de país.",
-          "Gracias. ¿Y tu teléfono con código de país? (ej: 5491123456789)",
-          clinic
+        reply: await generateResponse(
+          clinic,
+          state,
+          disponibles,
+          `Mostrá los horarios disponibles para ${state.fecha} y preguntá cuál prefiere.`,
+          `Para ${state.fecha} tengo estos horarios: ${disponibles.slice(0, 8).join(", ")}. ¿Cuál te queda mejor?`,
         ),
       });
     }
 
-    const telefono = parseTelefono(ultimo) ?? parseTelefono(userTexts.join(" | "));
-    if (!telefono) {
+    if (!disponibles.includes(state.hora)) {
       return NextResponse.json({
-        reply: await redactar("No se entendió el teléfono. Pedí el teléfono con código de país.", "¿Me pasás tu teléfono con código de país? (ej: 5491123456789)", clinic),
-      });
-    }
-
-    // Paso 5: verificar disponibilidad y guardar
-    const disponibles = await consultarHorarios(fecha, clinic);
-    if (!disponibles.includes(hora)) {
-      const muestra = disponibles.slice(0, 6).join(", ");
-      return NextResponse.json({
-        reply: await redactar(
-          `El horario ${hora} ya no está libre el ${fecha}. Ofrecé estos: ${muestra}.`,
-          `Lo siento, el horario ${hora} ya no está disponible para ${fecha}. Los horarios libres son: ${muestra}. ¿Cuál preferís?`,
-          clinic
+        reply: await generateResponse(
+          clinic,
+          state,
+          disponibles,
+          `Las ${state.hora} no está disponible para ${state.fecha}. Ofrecé los disponibles.`,
+          `Las ${state.hora} no está libre para ${state.fecha}. Los horarios disponibles son: ${disponibles.slice(0, 8).join(", ")}. ¿Cuál preferís?`,
         ),
       });
     }
 
+    if (!state.nombre) {
+      return NextResponse.json({
+        reply: await generateResponse(
+          clinic,
+          state,
+          disponibles,
+          `Ya tenemos fecha (${state.fecha}) y hora (${state.hora}). Pedí el nombre completo.`,
+          `Perfecto, te anoto para el ${state.fecha} a las ${state.hora}. ¿Me decís tu nombre completo?`,
+        ),
+      });
+    }
+
+    if (!state.telefono) {
+      return NextResponse.json({
+        reply: await generateResponse(
+          clinic,
+          state,
+          disponibles,
+          `Tenemos fecha, hora y nombre (${state.nombre}). Pedí el teléfono con código de país.`,
+          `Gracias ${state.nombre}. ¿Me pasás tu teléfono con código de país para confirmar? (ej: 5491164106698)`,
+        ),
+      });
+    }
+
+    // All fields present → save
     try {
-      await guardarTurno({ nombre, telefono, fecha, hora });
+      await guardarTurno({
+        nombre: state.nombre,
+        telefono: state.telefono,
+        fecha: state.fecha,
+        hora: state.hora,
+      });
+
       return NextResponse.json({
-        reply: await redactar(
-          `Confirmá el turno de ${nombre} el ${fecha} a las ${hora}. Avisá que lo contactan por WhatsApp.`,
-          `¡Turno confirmado! ${nombre}, te anoté para el ${fecha} a las ${hora}. Te vamos a contactar por WhatsApp para confirmar. ¡Gracias!`,
-          clinic
+        reply: await generateResponse(
+          clinic,
+          state,
+          disponibles,
+          "Todos los datos están completos. Confirmá el turno con un mensaje cálido, incluyendo fecha, hora y que lo contactan por WhatsApp.",
+          `¡Turno confirmado ${state.nombre}! Te anoté para el ${state.fecha} a las ${state.hora}. Te vamos a contactar por WhatsApp para confirmar. ¡Gracias por confiar en el Dr. Aguirre!`,
         ),
       });
     } catch {
       return NextResponse.json({
-        reply: await redactar(
-          "Hubo error al guardar. Derivá a WhatsApp.",
-          "Hubo un problema técnico para guardar tu turno. Escribinos por WhatsApp y lo resolvemos al toque.",
-          clinic
+        reply: await generateResponse(
+          clinic,
+          state,
+          disponibles,
+          "Error al guardar el turno. Derivá al paciente a WhatsApp.",
+          "Hubo un problema técnico. Escribinos por WhatsApp al +54 11 6410-6698 y te ayudamos.",
         ),
       });
     }
   } catch (error) {
     console.error("Error en chat:", error);
-    const errorMsg = error instanceof Error ? error.message : "Error desconocido";
     return NextResponse.json(
-      { reply: `Error del servidor: ${errorMsg}. Probá de nuevo.` },
-      { status: 200 }
+      { reply: "Uy, ocurrió un error. Probá de nuevo en un momento." },
+      { status: 200 },
     );
   }
 }
