@@ -101,7 +101,7 @@ export default function ChatWidget() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap max-w-[90vw] text-center bg-ink text-paper text-xs font-medium px-3 py-2 rounded-xl shadow-elevated"
+                  className="absolute bottom-full left-4 mb-3 max-w-[75vw] text-left bg-ink text-paper text-xs font-medium px-3 py-2 rounded-xl shadow-elevated"
                 >
                   ¿Necesitás un turno?
                   <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-ink" />
